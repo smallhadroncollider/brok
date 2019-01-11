@@ -9,7 +9,7 @@ import ClassyPrelude
 
 import System.Directory (doesFileExist)
 
-import LinkParser (links)
+import Parser.Links (links)
 
 type TFilePath = Text
 
