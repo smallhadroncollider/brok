@@ -15,6 +15,9 @@ import LinkParser (links)
 markdown :: Text
 markdown = decodeUtf8 $(embedFile "test/data/links.md")
 
+tex :: Text
+tex = decodeUtf8 $(embedFile "test/data/links.tex")
+
 main :: IO ()
 main = defaultMain tests
 
@@ -96,17 +99,15 @@ tests =
               [ testCase
                     "links with surrounding text"
                     (assertEqual
-                         "Gives back google.com"
+                         "Gives back two URLs"
                          (Right ["https://google.com", "http://spoons.com"])
                          (links
                               "(test: Spec.hs)"
                               "A link to Google https://google.com - doesn't it look like http://spoons.com"))
-              , expectFail $
-              -- not parsing whole file correctly
-                testCase
+              , testCase
                     "basic markdown"
                     (assertEqual
-                         "Gives back google.com"
+                         "Gives back list of URLS"
                          (Right
                               [ "https://google.com"
                               , "http://amazon.com"
@@ -114,5 +115,24 @@ tests =
                               , "http://www.apple.com"
                               ])
                          (links "(test: links.md)" markdown))
+              , testCase
+                    "tex"
+                    (assertEqual
+                         "Gives back list of URLs"
+                         (Right
+                              [ "https://eloquentjavascript.net/01_values.html"
+                              , "http://exploringjs.com/impatient-js/ch_variables-assignment.html"
+                              , "https://developers.google.com/web/updates/2015/01/ES6-Template-Strings#string_substitution"
+                              , "https://medium.com/dailyjs/the-why-behind-the-wat-an-explanation-of-javascripts-weird-type-system-83b92879a8db"
+                              , "https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Building_blocks/conditionals"
+                              , "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Loops_and_iteration"
+                              , "https://eloquentjavascript.net/02_program_structure.html"
+                              , "http://exploringjs.com/impatient-js/ch_control-flow.html"
+                              , "https://rosettacode.org/wiki/FizzBuzz"
+                              , "https://www.youtube.com/watch?v=QPZ0pIK_wsc"
+                              , "https://www.amazon.co.uk/Code-Language-Computer-Hardware-Software/dp/0735611319"
+                              , "https://en.wikipedia.org/wiki/Turing_completeness"
+                              ])
+                         (links "(test: links.md)" tex))
               ]
         ]

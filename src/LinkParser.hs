@@ -6,9 +6,9 @@ module LinkParser
     , links
     ) where
 
-import ClassyPrelude hiding (optional)
+import ClassyPrelude hiding (try)
 
-import Text.Parsec      (alphaNum, anyToken, char, many1, oneOf, optionMaybe, parse, string)
+import Text.Parsec      (alphaNum, anyToken, char, many1, oneOf, optionMaybe, parse, string, try)
 import Text.Parsec.Text (Parser)
 
 type Link = Text
@@ -45,7 +45,7 @@ noise :: Parser Token
 noise = anyToken >> return Nothing
 
 urls :: Parser [Link]
-urls = catMaybes <$> many1 (url <|> noise)
+urls = catMaybes <$> many1 (try url <|> noise)
 
 -- run parser
 links :: FilePath -> Text -> Either Text [Link]

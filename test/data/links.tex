@@ -1,0 +1,96 @@
+\section{FizzBuzz}
+
+\textit{a.k.a. Everyone's Favourite Job Interview Question}
+\\
+
+The FizzBuzz challenge is as follows:
+
+\begin{itemize}
+    \item write some code that will output the numbers 1 to 100 in the console
+    \item \textit{unless} the number is divisible by 3, in which case output ``Fizz''
+    \item \textit{or} the number is divisible by 5, in which case output ``Buzz''
+    \item \textit{if} the number is divisible by 3 \textit{and} 5, output ``FizzBuzz''
+\end{itemize}
+
+The first lines of output should look like this:
+
+\begin{minted}{javascript}
+1
+2
+Fizz
+4
+Buzz
+Fizz
+7
+8
+Fizz
+Buzz
+11
+Fizz
+13
+14
+FizzBuzz
+16
+...
+\end{minted}
+
+If you can solve FizzBuzz, then you understand the basic concepts of programming:
+
+\begin{enumerate}
+    \item Types: you have to work with numbers and strings
+    \item Variables: more elegant solutions require variables
+    \item Conditionals: you have to make decisions
+    \item Loops: you'll need to use a loop
+\end{enumerate}
+
+
+\pagebreak
+
+\begin{infobox}{Elegance \& Changeability}
+    You should try and write the most elegant code that you can. But how do you know if your code is elegant?
+    \\
+
+    Many people associate elegance with brevity: if you have two pieces of code that do the same thing, generally the shorter of the two does it more elegantly\footnote{When Microsoft first started they paid their programmers based on ``LOC'', or lines of code, meaning that the more code you wrote the more you got paid. This resulted in programmers deliberately writing inelegant code, as it took up more space.}. But this shouldn't be our key metric, as it can encourage people to write code that's so short as to be impossible to follow.
+    \\
+
+    A better metric of elegance is ``changeability'': if we need to change the functionality of our code, how many lines of code would we need to update?
+    \\
+
+    For example, if we wanted to update FizzBuzz so it outputs ``Spoon'' for lines divisible by 4 (so, for example, we'd get ``Spoon'' on line 4, ``FizzSpoon'' on line 12, and ``SpoonBuzz'' on line 20) we should only need to add an extra line or two to the code. If we need to add lots of additional code or make lots of changes to the existing code then the solution we've come across might not be the most elegant way to do it.
+
+    \quoteinline{Design is more the art of preserving changeability than it is the act of achieving perfection}{Sandi Metz, Practical Object-Oriented Design in Ruby}
+\end{infobox}
+
+\pagebreak
+
+\section{Additional Resources}
+
+\begin{itemize}
+    \item Types \& Variables
+        \begin{itemize}
+            \item \href{https://eloquentjavascript.net/01_values.html}{Eloquent JavaScript: Values, Types, and Operators}
+            \item \href{http://exploringjs.com/impatient-js/ch_variables-assignment.html}{JavaScript for Impatient Programmers: Variables \& Values}
+            \item \href{https://developers.google.com/web/updates/2015/01/ES6-Template-Strings#string_substitution}{Template Strings}
+            \item \href{https://medium.com/dailyjs/the-why-behind-the-wat-an-explanation-of-javascripts-weird-type-system-83b92879a8db}{The Why Behind the Wat: An Explanation of JavaScript's Weird Type System}
+        \end{itemize}
+
+    \item Conditionals \& Loops
+        \begin{itemize}
+            \item \href{https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Building_blocks/conditionals}{MDN: Conditionals}
+            \item \href{https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Loops_and_iteration}{MDN: Loops}
+            \item \href{https://eloquentjavascript.net/02_program_structure.html}{Eloquent JavaScript: Program Structure}
+            \item \href{http://exploringjs.com/impatient-js/ch_control-flow.html}{JavaScript for Impatient Programmers: Control Flow}
+        \end{itemize}
+
+    \item FizzBuzz
+        \begin{itemize}
+            \item \href{https://rosettacode.org/wiki/FizzBuzz}{FizzBuzz in Almost Every Language}
+            \item \href{https://www.youtube.com/watch?v=QPZ0pIK_wsc}{FizzBuzz: One Simple Interview Question}
+        \end{itemize}
+
+    \item Computer Science
+        \begin{itemize}
+            \item \href{https://www.amazon.co.uk/Code-Language-Computer-Hardware-Software/dp/0735611319}{Code: The Hidden Language of Computer Hardware and Software}
+            \item \href{https://en.wikipedia.org/wiki/Turing_completeness}{Turing Completeness}
+        \end{itemize}
+\end{itemize}

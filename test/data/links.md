@@ -1,11 +1,13 @@
 # Some Links
 
-- [https://google.com](Google)
-- [http://amazon.com](Amazon)
+Here are some links:
 
-Blah blah blah
+- This is a link to Google: [https://google.com](Google)
+- This is Amazon: [http://amazon.com](Amazon)
+
+## Bloop
 
 Some more links:
 
 - [https://www.facebook.com](Facebook)
-- [http://apple.com](Apple)
+- [http://www.apple.com](Apple)
