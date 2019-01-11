@@ -15,6 +15,9 @@ import LinkParser (links)
 markdown :: Text
 markdown = decodeUtf8 $(embedFile "test/data/links.md")
 
+complex :: Text
+complex = decodeUtf8 $(embedFile "test/data/complex.md")
+
 tex :: Text
 tex = decodeUtf8 $(embedFile "test/data/links.tex")
 
@@ -116,6 +119,17 @@ tests =
                               ])
                          (links "(test: links.md)" markdown))
               , testCase
+                    "complex markdown"
+                    (assertEqual
+                         "Gives back list of URLS"
+                         (Right
+                              [ "https://developer.mozilla.org/en-US/docs/Web/API/Window"
+                              , "https://developer.mozilla.org/en-US/docs/Web/API/Window/getComputedStyle"
+                              , "https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect"
+                              , "https://developer.mozilla.org/en-US/docs/Learn/HTML/Howto/Use_data_attributes"
+                              ])
+                         (links "(test: complex.md)" complex))
+              , testCase
                     "tex"
                     (assertEqual
                          "Gives back list of URLs"
@@ -133,6 +147,6 @@ tests =
                               , "https://www.amazon.co.uk/Code-Language-Computer-Hardware-Software/dp/0735611319"
                               , "https://en.wikipedia.org/wiki/Turing_completeness"
                               ])
-                         (links "(test: links.md)" tex))
+                         (links "(test: links.tex)" tex))
               ]
         ]
