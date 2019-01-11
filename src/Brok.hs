@@ -3,52 +3,48 @@
 
 module Brok
     ( brok
-    , links
     ) where
 
 import ClassyPrelude
 
-import Data.Either (fromRight)
+import System.Directory (doesFileExist)
 
-import Text.Parsec      (alphaNum, anyToken, char, many1, oneOf, optionMaybe, parse, string)
-import Text.Parsec.Text (Parser)
+import LinkParser (links)
 
-type Link = Text
+type TFilePath = Text
 
-type Token = Maybe Link
+-- utility
+boolToEither :: a -> Bool -> Either a a
+boolToEither a True  = Right a
+boolToEither a False = Left a
 
-surround :: Char -> Char -> Parser Text -> Parser Text
-surround open close parser = do
-    o <- singleton <$> char open
-    fragment <- parser
-    c <- singleton <$> char close
-    return $ o ++ fragment ++ c
+-- IO
+exists :: TFilePath -> IO (Either TFilePath TFilePath)
+exists file = boolToEither file <$> doesFileExist (unpack file)
 
-parens :: Parser Text -> Parser Text
-parens parser = surround '(' ')' parser <|> surround '[' ']' parser
+readContent :: TFilePath -> IO (FilePath, Text)
+readContent path = do
+    let filepath = unpack path
+    content <- decodeUtf8 <$> readFile filepath
+    return (filepath, content)
 
-urlChar :: Parser Char
-urlChar = alphaNum <|> oneOf "-._~:/?#%@!$&*+,;="
+-- CLI
+errors :: Text -> [Text] -> IO ()
+errors _ []            = return ()
+errors message missing = putStrLn message >> putStrLn (unlines missing)
 
-urlChars :: Parser Text
-urlChars = concat <$> many1 (parens urlChars <|> (pack <$> many1 urlChar))
+parseArgs :: [Text] -> IO [Either TFilePath TFilePath]
+parseArgs files = sequence (exists <$> files)
 
-url :: Parser Token
-url = do
-    protocol <- pack <$> string "http"
-    secure <- maybe "" singleton <$> optionMaybe (char 's')
-    slashes <- pack <$> string "://"
-    address <- urlChars
-    return . Just $ concat [protocol, secure, slashes, address]
-
-noise :: Parser Token
-noise = anyToken >> return Nothing
-
-urls :: Parser [Link]
-urls = catMaybes <$> many1 (url <|> noise)
-
-links :: FilePath -> Text -> [Link]
-links path txt = fromRight [] $ parse urls path txt
-
+-- entry point
 brok :: IO ()
-brok = putStrLn "brok"
+brok
+    -- get files from command line
+ = do
+    files <- getArgs >>= parseArgs
+    _ <- errors "Could not find files:" (lefts files)
+    content <- sequence (readContent <$> rights files)
+    -- parse links
+    let results = uncurry links <$> content
+    _ <- errors "Parsing errors:" (lefts results)
+    putStrLn $ unlines (unlines <$> rights results)

@@ -29,6 +29,7 @@ dependencies:
 library:
   source-dirs: src
   dependencies:
+  - directory
   - parsec
 
 executables:
@@ -52,6 +53,7 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - brok
+    - file-embed
     - tasty
     - tasty-hunit
     - tasty-expected-failure
