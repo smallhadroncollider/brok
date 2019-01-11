@@ -1,0 +1,73 @@
+resolver="lts-13.2"
+ghcv="8.6.3"
+
+branch=$(git rev-parse --abbrev-ref HEAD)
+
+if [ $branch != "master" ]; then
+    echo "\033[0;31mMust be on master branch\033[0m"
+    exit
+fi
+
+if [ ! -d ".stack-work" ]; then
+    echo "\033[0;31mMust be run in project root\033[0m"
+    exit
+fi
+
+if [ -z "$1" ]; then
+    echo "\033[0;31mVersion number required\033[0m"
+    exit
+fi
+
+# make sure latest changes pushed to github
+git push --all && git push --tags
+
+# clean out previous build attempts
+rm -rf .stack-work/install
+
+# sort out releases directory
+rm -rf "releases/$1/brok"
+mkdir -p "releases/$1/brok"
+
+# Mac
+stack build --ghc-options -O3
+
+tar -czvf "releases/$1/brok-$1_x86-64-mac.tar.gz" --directory=".stack-work/install/x86_64-osx/$resolver/$ghcv/bin" "brok"
+
+
+# Linux
+stack docker pull
+stack build --docker --ghc-options -O3
+
+LINUX_DIR=$(ls .stack-work/install | grep linux)
+
+tar -czvf "releases/$1/brok-$1_x86-64-linux.tar.gz" --directory=".stack-work/install/$LINUX_DIR/$resolver/$ghcv/bin" "brok"
+
+mkdir -p "releases/$1/brok/DEBIAN"
+mkdir -p "releases/$1/brok/usr/local/bin"
+
+cp ".stack-work/install/$LINUX_DIR/$resolver/$ghcv/bin/brok" "releases/$1/brok/usr/local/bin"
+
+echo "Package: brok
+Version: $1
+Maintainer: Mark Wales
+Architecture: amd64
+Description: Finds broken links in text files" > "releases/$1/brok/DEBIAN/control"
+
+docker run -v "$PWD/releases/$1":/usr/src/app -w /usr/src/app debian dpkg-deb --build brok
+
+mv "releases/$1/brok.deb" "releases/$1/brok-$1_x86-64-linux.deb"
+
+# Release Template
+rm -rf "releases/$1/brok"
+
+open "releases/$1"
+open "https://github.com/smallhadroncollider/brok/releases/new"
+
+echo "-
+
+### Installation
+
+- Mac/Linux: download binary and place it in a directory in your \`\$PATH\` (e.g. \`/usr/local/bin\`)
+- Debian (including Ubuntu): download the \`.deb\` file and run \`dpkg -i brok-$1_x86-64-linux.deb\`" | pbcopy
+
+echo "Release info copied to clipboard"
