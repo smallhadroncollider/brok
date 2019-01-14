@@ -8,8 +8,8 @@ module Http
 
 import ClassyPrelude
 
-import Network.HTTP.Simple (HttpException, getResponseStatusCode, httpNoBody, parseRequest,
-                            setRequestMethod)
+import Network.HTTP.Simple (HttpException, Request, addRequestHeader, getResponseStatusCode,
+                            httpNoBody, parseRequest, setRequestMethod)
 
 import Parser.Links (Link)
 
@@ -17,20 +17,23 @@ data LinkStatus
     = Working
     | Broken Int
     | ConnectionFailure
-    deriving (Show)
+    deriving (Show, Eq)
 
 type StatusCode = Either HttpException Int
 
+setHeaders :: Request -> Request
+setHeaders = addRequestHeader "User-Agent" "smallhadroncollider/brok"
+
 makeRequest :: ByteString -> Link -> IO StatusCode
 makeRequest method url = do
-    request <- setRequestMethod method <$> parseRequest (unpack url)
+    request <- setHeaders . setRequestMethod method <$> parseRequest (unpack url)
     (getResponseStatusCode <$>) <$> try (httpNoBody request)
 
 tryWithGet :: Link -> StatusCode -> IO StatusCode
 tryWithGet url (Right code)
-    -- if 405 or 500 then try a GET request instead
-    -- not all servers support HEAD
-    | code == 405 || code >= 500 = makeRequest "GET" url
+    -- various 400/500 errors mean HEAD support doesn't work 
+    -- so try with GET instead 
+    | code >= 400 && code /= 404 = makeRequest "GET" url
     | otherwise = return (Right code)
 tryWithGet _ sc = return sc
 

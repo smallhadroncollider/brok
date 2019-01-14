@@ -59,5 +59,6 @@ tests:
     - brok
     - file-embed
     - tasty
+    - tasty-discover
     - tasty-hunit
     - tasty-expected-failure
