@@ -143,4 +143,5 @@ test_parser =
                               ])
                          (links tex))
               ]
+        , testCase "nothing" (assertEqual "Gives back empty list" (Right []) (links ""))
         ]

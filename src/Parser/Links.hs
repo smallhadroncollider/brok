@@ -41,6 +41,7 @@ urls = nub . catMaybes <$> many1 (try1 url <|> noise)
 
 -- run parser
 links :: Text -> Either ParseError [Link]
+links "" = Right []
 links content =
     case parse urls "" content of
         Right c -> Right c
