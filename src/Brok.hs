@@ -7,79 +7,68 @@ module Brok
 
 import ClassyPrelude
 
-import Data.Text.IO        (hPutStr, hPutStrLn)
-import System.Console.ANSI (Color (Green, Red), ColorIntensity (Vivid), ConsoleLayer (Foreground),
-                            SGR (Reset, SetColor), hSetSGR)
-import System.Directory    (doesFileExist)
+import System.Directory (doesFileExist)
+import System.Exit      (exitFailure, exitSuccess)
 
+import CLI
 import Http         (LinkStatus (..), check)
-import Parser.Links (Link, links)
+import Parser.Links (Link, ParseError, links)
 
 type TFilePath = Text
 
--- utility
-boolToEither :: a -> Bool -> Either a a
-boolToEither a True  = Right a
-boolToEither a False = Left a
-
 -- IO
-exists :: TFilePath -> IO (Either TFilePath TFilePath)
-exists file = boolToEither file <$> doesFileExist (unpack file)
+readIfTrue :: FilePath -> Bool -> IO (Maybe Text)
+readIfTrue path True = Just <$> (decodeUtf8 <$> readFile path)
+readIfTrue _ False   = return Nothing
 
-readContent :: TFilePath -> IO (FilePath, Text)
+readContent :: TFilePath -> IO (TFilePath, Maybe Text)
 readContent path = do
     let filepath = unpack path
-    content <- decodeUtf8 <$> readFile filepath
-    return (filepath, content)
+    status <- doesFileExist filepath >>= readIfTrue filepath
+    return (path, status)
 
--- CLI
-errorMessage :: Text -> IO ()
-errorMessage message = do
-    hSetSGR stderr [SetColor Foreground Vivid Red]
-    hPutStrLn stderr message
-    hSetSGR stderr [Reset]
+-- output
+brokenOutput :: (Link, LinkStatus) -> IO ()
+brokenOutput (url, Working)           = splitOut "  - OK" url
+brokenOutput (url, Broken code)       = splitErr ("  -" ++ tshow code) url
+brokenOutput (url, ConnectionFailure) = splitErr "  - Could not connect" url
 
-errors :: Text -> [Text] -> IO ()
-errors _ [] = return ()
-errors message missing = do
-    errorMessage message
-    hPutStrLn stderr ""
-    errorMessage (unlines $ ("- " ++) <$> missing)
+statusError :: (Link, LinkStatus) -> Bool
+statusError (_, Working) = False
+statusError _            = True
 
-split :: Handle -> Color -> Text -> Text -> IO ()
-split hdl color left right = do
-    hSetSGR hdl [SetColor Foreground Vivid color]
-    hPutStr hdl left
-    hSetSGR hdl [Reset]
-    hPutStr hdl $ ": " ++ right
-    hPutStrLn hdl ""
+countErrors :: [(Link, LinkStatus)] -> Int
+countErrors statuses = length $ filter statusError statuses
 
-splitErr :: Text -> Text -> IO ()
-splitErr = split stderr Red
+outputPath :: TFilePath -> Text
+outputPath path = concat ["\n", "[", path, "]"]
 
-splitOut :: Text -> Text -> IO ()
-splitOut = split stdout Green
-
-parseArgs :: [Text] -> IO [Either TFilePath TFilePath]
-parseArgs files = sequence (exists <$> files)
+output :: (TFilePath, Maybe (Either ParseError [(Link, LinkStatus)])) -> IO Bool
+output (path, Nothing) = do
+    errorMessage $ outputPath path
+    errorMessage "  - File Not found"
+    return True
+output (path, Just (Left err)) = do
+    errorMessage $ outputPath path
+    errorMessage "  - File could not be parsed"
+    errorMessage err
+    return True
+output (path, Just (Right statuses)) = do
+    let errs = countErrors statuses /= 0
+    if errs
+        then errorMessage $ outputPath path
+        else message $ outputPath path
+    sequence_ $ brokenOutput <$> statuses
+    return errs
 
 -- entry point
-brokenOutput :: (Link, LinkStatus) -> IO ()
-brokenOutput (url, Working)           = splitOut "OK" url
-brokenOutput (url, Broken code)       = splitErr (tshow code) url
-brokenOutput (url, ConnectionFailure) = splitErr "Could not connect" url
-
 brok :: IO ()
-brok
-    -- get files from command line
- = do
-    files <- getArgs >>= parseArgs
-    _ <- errors "Could not find files:" (lefts files)
-    content <- sequence (readContent <$> rights files)
-    -- parse links
-    let results = uncurry links <$> content
-    _ <- errors "Parsing errors:" (lefts results)
-    -- check links
-    checks <- sequence (check <$> rights results)
-    -- output any broken links
-    void . sequence $ brokenOutput <$> concat checks
+brok = do
+    files <- getArgs
+    content <- sequence (readContent <$> files)
+    let parsed = ((links <$>) <$>) <$> content
+    checked <- sequence (sequence . (sequence . (sequence . (check <$>) <$>) <$>) <$> parsed)
+    anyErrors <- sequence $ output <$> checked
+    if foldl' (||) False anyErrors
+        then void exitFailure
+        else void exitSuccess

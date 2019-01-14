@@ -17,6 +17,7 @@ data LinkStatus
     = Working
     | Broken Int
     | ConnectionFailure
+    deriving (Show)
 
 type StatusCode = Either HttpException Int
 
