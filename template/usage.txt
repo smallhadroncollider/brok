@@ -5,3 +5,13 @@ Options:
 --cache SECONDS           The number of seconds to cache successful results for (default: 86400)
 --interval MILLISECONDS   The number of milliseconds between each request (default: 100)
 --ignore URLS             A list of URL prefixes to ignore
+
+Examples:
+
+brok links.md
+brok links.md links.tex
+brok */**/*.tex
+brok --cache 604800 links.md links.tex
+brok --interval 1000 links.md links.tex
+brok --ignore "https://facebook.com" "https://google.com" links.md links.tex
+brok --cache 604800 --interval 1000 --ignore "https://facebook.com" "https://google.com" */**/*.tex

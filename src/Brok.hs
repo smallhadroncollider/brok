@@ -11,7 +11,7 @@ import ClassyPrelude
 import Data.FileEmbed (embedFile)
 import System.Exit    (exitFailure, exitSuccess)
 
-import           Brok.IO.CLI       (header, replace)
+import           Brok.IO.CLI       (errorMessage, header, replace)
 import           Brok.IO.DB        (getCached, setCached)
 import           Brok.IO.Document  (readContent)
 import           Brok.IO.Http      (check)
@@ -20,6 +20,7 @@ import           Brok.Options      (parse)
 import           Brok.Parser.Links (links)
 import qualified Brok.Types.Config as C (Config, cache, files, ignore, interval)
 import           Brok.Types.Link   (getURL, isSuccess)
+import           Brok.Types.Next   (Next (..))
 import           Brok.Types.Result (cachedLinks, ignoredLinks, justLinks, linkIOMap, parseLinks,
                                     pathToResult)
 
@@ -49,13 +50,17 @@ go config
         then void exitFailure
         else void exitSuccess
 
+showHelp :: IO ()
+showHelp = putStr $ decodeUtf8 $(embedFile "template/usage.txt")
+
 -- entry point
 brok :: IO ()
 brok = do
     config <- parse <$> getArgs
     case config of
-        Right cnf -> go cnf
+        Right (Continue cnf) -> go cnf
+        Right Help -> showHelp
         Left _ -> do
-            putStrLn "Invalid format"
-            putStr $ decodeUtf8 $(embedFile "test/data/links.md")
+            errorMessage "Invalid format"
+            showHelp
             void exitFailure

@@ -10,50 +10,61 @@ import Test.Tasty.HUnit
 
 import Brok.Options      (parse)
 import Brok.Types.Config
+import Brok.Types.Next   (Next (..))
 
 test_options :: TestTree
 test_options =
     testGroup
         "Brok.Options"
-        [ testCase
+        [ testGroup
+              "Help"
+              [ testCase "--help" (assertEqual "return Help" (Right Help) (parse ["--help"]))
+              , testCase "-h" (assertEqual "return Help" (Right Help) (parse ["-h"]))
+              ]
+        , testCase
               "single file"
               (assertEqual
                    "gives back file"
-                   (Right (defaultConfig {files = ["blah.md"]}))
+                   (Right (Continue (defaultConfig {files = ["blah.md"]})))
                    (parse ["blah.md"]))
         , testCase
               "multiple files"
               (assertEqual
                    "gives back files"
-                   (Right (defaultConfig {files = ["blah.md", "tests/spoon.md"]}))
+                   (Right (Continue (defaultConfig {files = ["blah.md", "tests/spoon.md"]})))
                    (parse ["blah.md", "tests/spoon.md"]))
         , testCase
               "single file with cache option"
               (assertEqual
                    "gives back files"
-                   (Right (defaultConfig {cache = 172800, files = ["blah.md"]}))
+                   (Right (Continue (defaultConfig {cache = 172800, files = ["blah.md"]})))
                    (parse ["--cache", "172800", "blah.md"]))
         , testCase
               "multiple files with cache option"
               (assertEqual
                    "gives back files"
-                   (Right (defaultConfig {cache = 172800, files = ["blah.md", "tests/spoon.md"]}))
+                   (Right
+                        (Continue
+                             (defaultConfig {cache = 172800, files = ["blah.md", "tests/spoon.md"]})))
                    (parse ["--cache", "172800", "blah.md", "tests/spoon.md"]))
         , testCase
               "multiple files with interval option"
               (assertEqual
                    "gives back files"
-                   (Right (defaultConfig {interval = 200, files = ["blah.md", "tests/spoon.md"]}))
+                   (Right
+                        (Continue
+                             (defaultConfig {interval = 200, files = ["blah.md", "tests/spoon.md"]})))
                    (parse ["--interval", "200", "blah.md", "tests/spoon.md"]))
         , testCase
               "multiple files with ignore option"
               (assertEqual
                    "gives back files"
                    (Right
-                        (defaultConfig
-                         { ignore = ["http://www.google.com", "http://facebook.com"]
-                         , files = ["blah.md", "tests/spoon.md"]
-                         }))
+                        (Continue
+                             (defaultConfig
+                              { ignore = ["http://www.google.com", "http://facebook.com"]
+                              , files = ["blah.md", "tests/spoon.md"]
+                              })))
                    (parse
                         [ "--ignore"
                         , "http://www.google.com"
@@ -66,12 +77,13 @@ test_options =
               (assertEqual
                    "gives back files"
                    (Right
-                        (defaultConfig
-                         { cache = 172800
-                         , interval = 400
-                         , ignore = ["http://www.google.com", "http://facebook.com"]
-                         , files = ["blah.md", "tests/spoon.md"]
-                         }))
+                        (Continue
+                             (defaultConfig
+                              { cache = 172800
+                              , interval = 400
+                              , ignore = ["http://www.google.com", "http://facebook.com"]
+                              , files = ["blah.md", "tests/spoon.md"]
+                              })))
                    (parse
                         [ "--cache"
                         , "172800"
@@ -88,12 +100,13 @@ test_options =
               (assertEqual
                    "gives back files"
                    (Right
-                        (defaultConfig
-                         { cache = 172800
-                         , interval = 400
-                         , ignore = ["http://www.google.com", "http://facebook.com"]
-                         , files = ["blah.md", "tests/spoon.md"]
-                         }))
+                        (Continue
+                             (defaultConfig
+                              { cache = 172800
+                              , interval = 400
+                              , ignore = ["http://www.google.com", "http://facebook.com"]
+                              , files = ["blah.md", "tests/spoon.md"]
+                              })))
                    (parse
                         [ "--interval"
                         , "400"
@@ -110,12 +123,13 @@ test_options =
               (assertEqual
                    "gives back files"
                    (Right
-                        (defaultConfig
-                         { cache = 172800
-                         , interval = 400
-                         , ignore = ["http://www.google.com", "http://facebook.com"]
-                         , files = ["blah.md", "tests/spoon.md"]
-                         }))
+                        (Continue
+                             (defaultConfig
+                              { cache = 172800
+                              , interval = 400
+                              , ignore = ["http://www.google.com", "http://facebook.com"]
+                              , files = ["blah.md", "tests/spoon.md"]
+                              })))
                    (parse
                         [ "--ignore"
                         , "http://www.google.com"
@@ -131,6 +145,6 @@ test_options =
               "files with space"
               (assertEqual
                    "gives back files"
-                   (Right (defaultConfig {files = ["blah.md", "tests/spoon book.md"]}))
+                   (Right (Continue (defaultConfig {files = ["blah.md", "tests/spoon book.md"]})))
                    (parse ["blah.md", "tests/spoon book.md"]))
         ]

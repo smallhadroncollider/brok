@@ -7,7 +7,7 @@
 
 - Should detect if internet connection is down
 - Cache length option should accept units: s, m, h, d - default to s
-- --help command
+- Should be able to detect links without http:// or https:// prefixes
 
 ## Bugs
 
@@ -29,3 +29,4 @@
 - Option for interval between requests
 - Should be able to ignore specific URLs
     > List of URL prefixes
+- --help command

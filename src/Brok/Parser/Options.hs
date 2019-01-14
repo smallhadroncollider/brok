@@ -10,6 +10,7 @@ import ClassyPrelude
 import Brok.Parser.Links  (url)
 import Brok.Parser.Parsec
 import Brok.Types.Config
+import Brok.Types.Next    (Next (..))
 
 data Option
     = Cache Integer
@@ -54,10 +55,16 @@ arguments = do
             Just opts' -> opts' ++ [Files fls]
             Nothing    -> [Files fls]
 
+helpP :: Parser Next
+helpP = lexeme $ (try1 (text "--help") <|> text "-h") $> Help
+
+next :: Parser Next
+next = try1 helpP <|> (Continue <$> arguments)
+
 -- run parser
-options :: [Text] -> Either Text Config
+options :: [Text] -> Either Text Next
 options [] = Left "No files provided"
 options content =
-    case parse arguments "" (unlines content) of
+    case parse next "" (unlines content) of
         Right c -> Right c
         Left e  -> Left $ tshow e
