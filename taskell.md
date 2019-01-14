@@ -6,10 +6,12 @@
 - Should detect if internet connection is down
 - Cache length option should accept units: s, m, h, d - default to s
 - Should be able to detect links without http:// or https:// prefixes
+- More detailed HttpException errors
 
 ## Bugs
 
 - Can't parse links containing single quote marks
+- Fetching message sometimes goes to more than one line, so next line doesn't replace it (saveCursor/restoreCursor?)
 - Edge case: shouldn't delay if only a single URL being checked
 
 ## In Progress
@@ -30,3 +32,4 @@
 - --help command
 - Use attoparsec
     > Already used by HTTP-conduit, so may as well use it
+- Fixed InvalidURLException crash
