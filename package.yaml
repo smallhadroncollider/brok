@@ -29,8 +29,12 @@ dependencies:
 library:
   source-dirs: src
   dependencies:
+  - ansi-terminal
   - directory
+  - http-conduit
+  - http-client
   - parsec
+  - text
 
 executables:
   brok:
