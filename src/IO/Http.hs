@@ -10,6 +10,7 @@ import ClassyPrelude
 import Network.HTTP.Simple (HttpException, Request, addRequestHeader, getResponseStatusCode,
                             httpNoBody, parseRequest, setRequestMethod)
 
+import IO.CLI     (replace)
 import Types.Link
 
 type StatusCode = Either HttpException Int
@@ -31,7 +32,7 @@ tryWithGet url (Right code)
 tryWithGet _ sc = return sc
 
 fetch :: URL -> IO StatusCode
-fetch url = putStrLn ("  - Fetching: " ++ url) >> makeRequest "HEAD" url >>= tryWithGet url
+fetch url = replace ("Fetching: " ++ url) >> makeRequest "HEAD" url >>= tryWithGet url
 
 codeToResponse :: Link -> StatusCode -> Link
 codeToResponse lnk (Right code)

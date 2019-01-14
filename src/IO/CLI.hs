@@ -6,18 +6,25 @@ module IO.CLI where
 import ClassyPrelude
 
 import Data.Text.IO        (hPutStr, hPutStrLn)
-import System.Console.ANSI (Color (Blue, Green, Red), ColorIntensity (Vivid),
-                            ConsoleLayer (Foreground), SGR (Reset, SetColor), hSetSGR)
+import System.Console.ANSI (Color (Blue, Green, Magenta, Red), ColorIntensity (Dull),
+                            ConsoleLayer (Foreground), SGR (Reset, SetColor), hClearLine,
+                            hCursorUpLine, hSetSGR)
 
 message :: Text -> IO ()
 message msg = do
-    hSetSGR stderr [SetColor Foreground Vivid Blue]
+    hSetSGR stderr [SetColor Foreground Dull Blue]
     hPutStrLn stdout msg
+    hSetSGR stderr [Reset]
+
+header :: Text -> IO ()
+header msg = do
+    hSetSGR stderr [SetColor Foreground Dull Magenta]
+    hPutStrLn stdout $ "*** " ++ msg ++ " ***"
     hSetSGR stderr [Reset]
 
 errorMessage :: Text -> IO ()
 errorMessage msg = do
-    hSetSGR stderr [SetColor Foreground Vivid Red]
+    hSetSGR stderr [SetColor Foreground Dull Red]
     hPutStrLn stderr msg
     hSetSGR stderr [Reset]
 
@@ -30,7 +37,7 @@ errors msg missing = do
 
 split :: Handle -> Color -> Text -> Text -> IO ()
 split hdl color left right = do
-    hSetSGR hdl [SetColor Foreground Vivid color]
+    hSetSGR hdl [SetColor Foreground Dull color]
     hPutStr hdl left
     hSetSGR hdl [Reset]
     hPutStr hdl $ ": " ++ right
@@ -41,3 +48,9 @@ splitErr = split stderr Red
 
 splitOut :: Text -> Text -> IO ()
 splitOut = split stdout Green
+
+replace :: Text -> IO ()
+replace msg = do
+    hCursorUpLine stdout 1
+    hClearLine stdout
+    hPutStrLn stdout msg

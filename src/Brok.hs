@@ -1,4 +1,5 @@
 {-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module Brok
     ( brok
@@ -8,6 +9,7 @@ import ClassyPrelude
 
 import System.Exit (exitFailure, exitSuccess)
 
+import IO.CLI       (header, replace)
 import IO.DB        (getCached, setCached)
 import IO.Document  (readContent)
 import IO.Http      (check)
@@ -30,10 +32,13 @@ brok
     cached <- getCached
     let cache = cachedLinks cached <$> parsed
     -- check links in each file
-    putStrLn "*** Checking URLs ***"
+    header "Checking URLs"
+    putStrLn ""
     checked <- sequence (linkIOMap check <$> cache)
+    replace "Fetching complete"
     -- display results
-    putStrLn "\n*** Results ***"
+    putStrLn ""
+    header "Results"
     anyErrors <- sequence $ output <$> checked
     -- cache successes
     setCached $ getURL <$> filter isSuccess (concat (justLinks <$> checked))

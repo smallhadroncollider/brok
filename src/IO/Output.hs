@@ -13,11 +13,11 @@ import Types.Result
 
 -- output
 linkOutput :: Link -> IO ()
-linkOutput (Link url BareLink)          = splitErr "  - Failed" url
-linkOutput (Link url Cached)            = splitOut "  - OK (cached)" url
-linkOutput (Link url (Working code))    = splitOut ("  - OK (" ++ tshow code ++ ")") url
-linkOutput (Link url (Broken code))     = splitErr ("  -" ++ tshow code) url
-linkOutput (Link url ConnectionFailure) = splitErr "  - Could not connect" url
+linkOutput (Link url BareLink)          = splitErr "- Failed (unknown)" url
+linkOutput (Link url Cached)            = splitOut "- OK (cached)" url
+linkOutput (Link url (Working code))    = splitOut ("- OK (" ++ tshow code ++ ")") url
+linkOutput (Link url (Broken code))     = splitErr ("- Failed (" ++ tshow code ++ ")") url
+linkOutput (Link url ConnectionFailure) = splitErr "- Could not connect" url
 
 statusError :: Link -> Bool
 statusError (Link _ (Working _)) = False
@@ -45,6 +45,8 @@ output (Result path (Links links)) = do
     if errs
         then errorMessage $ outputPath path
         else message $ outputPath path
-    sequence_ $ linkOutput <$> links
+    if not (null links)
+        then sequence_ $ linkOutput <$> links
+        else putStrLn "- No links found in file"
     return errs
 output _ = return False
