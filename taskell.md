@@ -6,8 +6,9 @@
 ## Features
 
 - Should space out requests
-- Should store recently tested links in .brocdb file
 - Should detect if internet connection is down
+- Should be able to ignore specific URLs
+    > Could add a URL to .brokdb with a far future timestamp?
 
 ## Bugs
 
@@ -22,3 +23,4 @@
 - Basic link checking
 - Should output file that problem occured in
 - Should return correct exit code
+- Should store recently tested links in .brokdb file

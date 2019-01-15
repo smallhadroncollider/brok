@@ -14,13 +14,14 @@ import Parser.Links (Link)
 
 -- output
 brokenOutput :: (Link, LinkStatus) -> IO ()
-brokenOutput (url, Working)           = splitOut "  - OK" url
+brokenOutput (url, Working True)      = splitOut "  - OK (cached)" url
+brokenOutput (url, Working False)     = splitOut "  - OK" url
 brokenOutput (url, Broken code)       = splitErr ("  -" ++ tshow code) url
 brokenOutput (url, ConnectionFailure) = splitErr "  - Could not connect" url
 
 statusError :: (Link, LinkStatus) -> Bool
-statusError (_, Working) = False
-statusError _            = True
+statusError (_, Working _) = False
+statusError _              = True
 
 countErrors :: [(Link, LinkStatus)] -> Int
 countErrors statuses = length $ filter statusError statuses

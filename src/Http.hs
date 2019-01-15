@@ -3,6 +3,7 @@
 
 module Http
     ( LinkStatus(..)
+    , broken
     , check
     ) where
 
@@ -13,8 +14,10 @@ import Network.HTTP.Simple (HttpException, Request, addRequestHeader, getRespons
 
 import Parser.Links (Link)
 
+type Cached = Bool
+
 data LinkStatus
-    = Working
+    = Working Cached
     | Broken Int
     | ConnectionFailure
     deriving (Show, Eq)
@@ -38,11 +41,11 @@ tryWithGet url (Right code)
 tryWithGet _ sc = return sc
 
 fetch :: Link -> IO StatusCode
-fetch url = makeRequest "HEAD" url >>= tryWithGet url
+fetch url = putStrLn ("  - Fetching: " ++ url) >> makeRequest "HEAD" url >>= tryWithGet url
 
 codeToResponse :: Link -> StatusCode -> (Link, LinkStatus)
 codeToResponse url (Right code)
-    | code >= 200 && code < 300 = (url, Working)
+    | code >= 200 && code < 300 = (url, Working False)
     | otherwise = (url, Broken code)
 codeToResponse url (Left _) = (url, ConnectionFailure)
 

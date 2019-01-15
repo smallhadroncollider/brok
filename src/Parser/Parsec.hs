@@ -6,6 +6,7 @@ module Parser.Parsec
     , alphaNum
     , anyToken
     , char
+    , digit
     , many1
     , oneOf
     , optionMaybe
@@ -22,7 +23,8 @@ module Parser.Parsec
 
 import ClassyPrelude hiding (try)
 
-import Text.Parsec      (alphaNum, anyToken, char, many1, oneOf, optionMaybe, parse, string, try)
+import Text.Parsec      (alphaNum, anyToken, char, digit, many1, oneOf, optionMaybe, parse, string,
+                         try)
 import Text.Parsec.Text (Parser)
 
 try1 :: Parser a -> Parser a

@@ -4,6 +4,7 @@
 module Parser.Links
     ( Link
     , links
+    , url
     ) where
 
 import ClassyPrelude
