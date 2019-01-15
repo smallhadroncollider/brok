@@ -28,14 +28,14 @@ urlChar = alphaNum <|> oneOf "-._~:/?#%@!$&*+,;="
 urlChars :: Parser Text
 urlChars = concat <$> many1 (parens urlChars <|> (pack <$> many1 urlChar))
 
-url :: Parser Token
-url = Just <$> (concat4 <$> text "http" <*> chopt 's' <*> text "://" <*> urlChars)
+url :: Parser Text
+url = concat4 <$> text "http" <*> chopt 's' <*> text "://" <*> urlChars
 
 noise :: Parser Token
 noise = anyToken >> return Nothing
 
 urls :: Parser [Link]
-urls = nub . catMaybes <$> many1 (try1 url <|> noise)
+urls = nub . catMaybes <$> many1 ((Just <$> try1 url) <|> noise)
 
 -- run parser
 links :: Text -> Either Text [Link]

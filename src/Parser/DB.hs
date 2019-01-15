@@ -16,12 +16,9 @@ line = do
     _ <- char ' '
     int <- many1 digit
     _ <- char '\n'
-    case lnk of
-        Just lnk' ->
-            case readMay int :: Maybe Integer of
-                Just i  -> return (lnk', i)
-                Nothing -> fail "Unable to parse timestamp"
-        Nothing -> fail "Unable to parse URL"
+    case readMay int :: Maybe Integer of
+        Just i  -> return (lnk, i)
+        Nothing -> fail "Unable to parse timestamp"
 
 entries :: Parser [(Link, Integer)]
 entries = many1 line
