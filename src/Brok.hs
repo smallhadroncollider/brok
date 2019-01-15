@@ -13,6 +13,12 @@ import IO.Document  (readContent)
 import IO.Output    (output)
 import Parser.Links (links)
 
+joinEither :: Either a (Either a b) -> Either a b
+joinEither (Left a)          = Left a
+joinEither (Right (Left a))  = Left a
+joinEither (Right (Right b)) = Right b
+
+-- entry point
 brok :: IO ()
 brok
     -- get files from command line
@@ -21,9 +27,9 @@ brok
     -- read files
     content <- sequence (readContent <$> files)
     -- find links in each file
-    let parsed = ((links <$>) <$>) <$> content
+    let parsed = (joinEither . (links <$>) <$>) <$> content
     -- check links in each file
-    checked <- sequence (sequence . (sequence . (sequence . (check <$>) <$>) <$>) <$> parsed)
+    checked <- sequence (sequence . (sequence . (check <$>) <$>) <$> parsed)
     -- display results
     anyErrors <- sequence $ output <$> checked
     -- exit with appropriate status code

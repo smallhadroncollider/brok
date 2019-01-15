@@ -10,7 +10,7 @@ import ClassyPrelude
 import CLI
 import Http         (LinkStatus (..))
 import IO.Document  (TFilePath)
-import Parser.Links (Link, ParseError)
+import Parser.Links (Link)
 
 -- output
 brokenOutput :: (Link, LinkStatus) -> IO ()
@@ -28,17 +28,12 @@ countErrors statuses = length $ filter statusError statuses
 outputPath :: TFilePath -> Text
 outputPath path = concat ["\n", "[", path, "]"]
 
-output :: (TFilePath, Maybe (Either ParseError [(Link, LinkStatus)])) -> IO Bool
-output (path, Nothing) = do
+output :: (TFilePath, Either Text [(Link, LinkStatus)]) -> IO Bool
+output (path, Left err) = do
     errorMessage $ outputPath path
-    errorMessage "  - File Not found"
+    errorMessage $ "  - " ++ err
     return True
-output (path, Just (Left err)) = do
-    errorMessage $ outputPath path
-    errorMessage "  - File could not be parsed"
-    errorMessage err
-    return True
-output (path, Just (Right statuses)) = do
+output (path, Right statuses) = do
     let errs = countErrors statuses /= 0
     if errs
         then errorMessage $ outputPath path

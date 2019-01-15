@@ -3,7 +3,6 @@
 
 module Parser.Links
     ( Link
-    , ParseError
     , links
     ) where
 
@@ -14,8 +13,6 @@ import Data.List (nub)
 import Parser.Parsec
 
 type Link = Text
-
-type ParseError = Text
 
 type Token = Maybe Link
 
@@ -40,7 +37,7 @@ urls :: Parser [Link]
 urls = nub . catMaybes <$> many1 (try1 url <|> noise)
 
 -- run parser
-links :: Text -> Either ParseError [Link]
+links :: Text -> Either Text [Link]
 links "" = Right []
 links content =
     case parse urls "" content of
