@@ -9,7 +9,7 @@ import ClassyPrelude
 import Test.Tasty
 import Test.Tasty.HUnit
 
-import Data.Either    (isLeft, isRight)
+import Data.Either    (fromRight, isLeft)
 import Data.FileEmbed (embedFile)
 
 import Parser.DB (db)
@@ -41,7 +41,13 @@ test_db =
                           , 1546008765)
                         ])
                    (db content))
-        , testCase "big file" (assertEqual "Gives back empty array" True (isRight $ db big))
+        , testCase
+              "big file"
+              (assertEqual
+                   "Gives back final url"
+                   (Just
+                        "https://developmentarc.gitbooks.io/react-indepth/content/life_cycle/the_life_cycle_recap.html")
+                   (fst <$> (lastMay . fromRight [] $ db big)))
         , testCase "invalid .brokdb" (assertEqual "Parse error" True (isLeft $ db invalid))
         , testCase "parses empty" (assertEqual "Gives back empty array" (Right []) (db ""))
         ]
