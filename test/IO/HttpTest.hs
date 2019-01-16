@@ -14,7 +14,7 @@ import Brok.Types.Link (Link (Link), LinkType (Working), urlToLink)
 test_http :: TestTree
 test_http =
     testGroup
-        "http"
+        "Brok.IO.Http"
         [ testCase "Medium (409 with HEAD)" $ do
               result <-
                   check $

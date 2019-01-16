@@ -26,7 +26,7 @@ tex = decodeUtf8 $(embedFile "test/data/links.tex")
 test_parser :: TestTree
 test_parser =
     testGroup
-        "links"
+        "Brok.Parser.Links"
         [ testGroup
               "single links"
               [ testCase

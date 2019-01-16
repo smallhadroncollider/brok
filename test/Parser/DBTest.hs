@@ -26,7 +26,7 @@ big = decodeUtf8 $(embedFile "test/data/.brokdb-big")
 test_db :: TestTree
 test_db =
     testGroup
-        "db"
+        "Brok.Parser.DB"
         [ testCase
               "parses .brokdb"
               (assertEqual
