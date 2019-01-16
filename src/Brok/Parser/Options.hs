@@ -17,9 +17,6 @@ data Option
     | Ignore [Text]
     | Files [Text]
 
-lexeme :: Parser a -> Parser a
-lexeme p = spaces *> p <* spaces
-
 readInt :: String -> String -> Parser Integer
 readInt arg value =
     maybe (fail $ "Unable to parse " ++ arg ++ " value") return (readMay value :: Maybe Integer)
