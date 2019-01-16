@@ -12,15 +12,15 @@ import System.Console.ANSI (Color (Blue, Green, Magenta, Red), ColorIntensity (D
 
 message :: Text -> IO ()
 message msg = do
-    hSetSGR stderr [SetColor Foreground Dull Blue]
+    hSetSGR stdout [SetColor Foreground Dull Blue]
     hPutStrLn stdout msg
-    hSetSGR stderr [Reset]
+    hSetSGR stdout [Reset]
 
 header :: Text -> IO ()
 header msg = do
-    hSetSGR stderr [SetColor Foreground Dull Magenta]
+    hSetSGR stdout [SetColor Foreground Dull Magenta]
     hPutStrLn stdout $ "*** " ++ msg ++ " ***"
-    hSetSGR stderr [Reset]
+    hSetSGR stdout [Reset]
 
 errorMessage :: Text -> IO ()
 errorMessage msg = do
