@@ -1,7 +1,7 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module HttpTest where
+module IO.HttpTest where
 
 import ClassyPrelude
 
