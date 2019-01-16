@@ -10,6 +10,7 @@ module Brok.Parser.Parsec
     , many1
     , oneOf
     , optionMaybe
+    , noneOf
     , parse
     , string
     , try1
@@ -19,12 +20,13 @@ module Brok.Parser.Parsec
     , surround
     , concat3
     , concat4
+    , spaces
     ) where
 
 import ClassyPrelude hiding (try)
 
-import Text.Parsec      (alphaNum, anyToken, char, digit, many1, oneOf, optionMaybe, parse, string,
-                         try)
+import Text.Parsec      (alphaNum, anyToken, char, digit, many1, noneOf, oneOf, optionMaybe, parse,
+                         spaces, string, try)
 import Text.Parsec.Text (Parser)
 
 try1 :: Parser a -> Parser a

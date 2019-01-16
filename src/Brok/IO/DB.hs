@@ -27,7 +27,7 @@ age = 86400
 removeOld :: [(URL, Integer)] -> IO [(URL, Integer)]
 removeOld cached = do
     timestamp <- getPOSIXTime
-    return $ filter (\(_, x) -> timestamp - fromInteger x < age) cached
+    return $ filter ((\val -> timestamp - val < age) . fromInteger . snd) cached
 
 stamp :: URL -> IO (URL, Integer)
 stamp lnk = do
