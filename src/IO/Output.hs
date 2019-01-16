@@ -7,37 +7,44 @@ module IO.Output
 
 import ClassyPrelude
 
-import CLI
-import Http         (LinkStatus (..))
-import IO.Document  (TFilePath)
-import Parser.Links (Link)
+import IO.CLI
+import Types.Link
+import Types.Result
 
 -- output
-brokenOutput :: (Link, LinkStatus) -> IO ()
-brokenOutput (url, Working True)      = splitOut "  - OK (cached)" url
-brokenOutput (url, Working False)     = splitOut "  - OK" url
-brokenOutput (url, Broken code)       = splitErr ("  -" ++ tshow code) url
-brokenOutput (url, ConnectionFailure) = splitErr "  - Could not connect" url
+linkOutput :: Link -> IO ()
+linkOutput (Link url BareLink)          = splitErr "  - Failed" url
+linkOutput (Link url Cached)            = splitOut "  - OK (cached)" url
+linkOutput (Link url (Working code))    = splitOut ("  - OK (" ++ tshow code ++ ")") url
+linkOutput (Link url (Broken code))     = splitErr ("  -" ++ tshow code) url
+linkOutput (Link url ConnectionFailure) = splitErr "  - Could not connect" url
 
-statusError :: (Link, LinkStatus) -> Bool
-statusError (_, Working _) = False
-statusError _              = True
+statusError :: Link -> Bool
+statusError (Link _ (Working _)) = False
+statusError (Link _ Cached)      = False
+statusError _                    = True
 
-countErrors :: [(Link, LinkStatus)] -> Int
+countErrors :: [Link] -> Int
 countErrors statuses = length $ filter statusError statuses
 
 outputPath :: TFilePath -> Text
 outputPath path = concat ["\n", "[", path, "]"]
 
-output :: (TFilePath, Either Text [(Link, LinkStatus)]) -> IO Bool
-output (path, Left err) = do
+output :: Result -> IO Bool
+output (Result path NotFound) = do
     errorMessage $ outputPath path
-    errorMessage $ "  - " ++ err
+    errorMessage "  - File not found"
     return True
-output (path, Right statuses) = do
-    let errs = countErrors statuses /= 0
+output (Result path (ParseError err)) = do
+    errorMessage $ outputPath path
+    errorMessage "  - Parse error:"
+    errorMessage err
+    return True
+output (Result path (Links links)) = do
+    let errs = countErrors links /= 0
     if errs
         then errorMessage $ outputPath path
         else message $ outputPath path
-    sequence_ $ brokenOutput <$> statuses
+    sequence_ $ linkOutput <$> links
     return errs
+output _ = return False

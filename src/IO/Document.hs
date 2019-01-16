@@ -8,15 +8,13 @@ module IO.Document
 import ClassyPrelude
 
 import System.Directory (doesFileExist)
+import Types.Result
 
-type TFilePath = Text
-
-readIfTrue :: FilePath -> Bool -> IO (Either Text Text)
-readIfTrue path True = Right <$> (decodeUtf8 <$> readFile path)
-readIfTrue _ False   = return $ Left "File not found"
-
-readContent :: TFilePath -> IO (TFilePath, Either Text Text)
-readContent path = do
+readContent :: Result -> IO Result
+readContent result = do
+    let path = getPath result
     let filepath = unpack path
-    status <- doesFileExist filepath >>= readIfTrue filepath
-    return (path, status)
+    exists <- doesFileExist filepath
+    if exists
+        then setContent result . decodeUtf8 <$> readFile filepath
+        else return $ notFound result

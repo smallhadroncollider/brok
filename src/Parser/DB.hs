@@ -7,10 +7,11 @@ module Parser.DB
 
 import ClassyPrelude
 
-import Parser.Links  (Link, url)
+import Parser.Links  (url)
 import Parser.Parsec
+import Types.Link
 
-line :: Parser (Link, Integer)
+line :: Parser (URL, Integer)
 line = do
     lnk <- url
     _ <- char ' '
@@ -20,11 +21,11 @@ line = do
         Just i  -> return (lnk, i)
         Nothing -> fail "Unable to parse timestamp"
 
-entries :: Parser [(Link, Integer)]
+entries :: Parser [(URL, Integer)]
 entries = many1 line
 
 -- run parser
-db :: Text -> Either Text [(Link, Integer)]
+db :: Text -> Either Text [(URL, Integer)]
 db "" = Right []
 db content =
     case parse entries "" content of

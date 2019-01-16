@@ -1,7 +1,7 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module CLI where
+module IO.CLI where
 
 import ClassyPrelude
 

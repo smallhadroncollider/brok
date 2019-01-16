@@ -2,8 +2,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Parser.Links
-    ( Link
-    , links
+    ( links
     , url
     ) where
 
@@ -12,10 +11,9 @@ import ClassyPrelude
 import Data.List (nub)
 
 import Parser.Parsec
+import Types.Link    (URL)
 
-type Link = Text
-
-type Token = Maybe Link
+type Token = Maybe URL
 
 -- parentheses
 parens :: Parser Text -> Parser Text
@@ -34,11 +32,11 @@ url = concat4 <$> text "http" <*> chopt 's' <*> text "://" <*> urlChars
 noise :: Parser Token
 noise = anyToken >> return Nothing
 
-urls :: Parser [Link]
+urls :: Parser [URL]
 urls = nub . catMaybes <$> many1 ((Just <$> try1 url) <|> noise)
 
 -- run parser
-links :: Text -> Either Text [Link]
+links :: Text -> Either Text [URL]
 links "" = Right []
 links content =
     case parse urls "" content of

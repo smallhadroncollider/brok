@@ -1,10 +1,8 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Http
-    ( LinkStatus(..)
-    , broken
-    , check
+module IO.Http
+    ( check
     ) where
 
 import ClassyPrelude
@@ -12,27 +10,19 @@ import ClassyPrelude
 import Network.HTTP.Simple (HttpException, Request, addRequestHeader, getResponseStatusCode,
                             httpNoBody, parseRequest, setRequestMethod)
 
-import Parser.Links (Link)
-
-type Cached = Bool
-
-data LinkStatus
-    = Working Cached
-    | Broken Int
-    | ConnectionFailure
-    deriving (Show, Eq)
+import Types.Link
 
 type StatusCode = Either HttpException Int
 
 setHeaders :: Request -> Request
 setHeaders = addRequestHeader "User-Agent" "smallhadroncollider/brok"
 
-makeRequest :: ByteString -> Link -> IO StatusCode
+makeRequest :: ByteString -> URL -> IO StatusCode
 makeRequest method url = do
     request <- setHeaders . setRequestMethod method <$> parseRequest (unpack url)
     (getResponseStatusCode <$>) <$> try (httpNoBody request)
 
-tryWithGet :: Link -> StatusCode -> IO StatusCode
+tryWithGet :: URL -> StatusCode -> IO StatusCode
 tryWithGet url (Right code)
     -- various 400/500 errors mean HEAD support doesn't work 
     -- so try with GET instead 
@@ -40,17 +30,14 @@ tryWithGet url (Right code)
     | otherwise = return (Right code)
 tryWithGet _ sc = return sc
 
-fetch :: Link -> IO StatusCode
+fetch :: URL -> IO StatusCode
 fetch url = putStrLn ("  - Fetching: " ++ url) >> makeRequest "HEAD" url >>= tryWithGet url
 
-codeToResponse :: Link -> StatusCode -> (Link, LinkStatus)
-codeToResponse url (Right code)
-    | code >= 200 && code < 300 = (url, Working False)
-    | otherwise = (url, Broken code)
-codeToResponse url (Left _) = (url, ConnectionFailure)
+codeToResponse :: Link -> StatusCode -> Link
+codeToResponse lnk (Right code)
+    | code >= 200 && code < 300 = working lnk code
+    | otherwise = broken lnk code
+codeToResponse lnk (Left _) = failure lnk
 
-broken :: Link -> IO (Link, LinkStatus)
-broken url = codeToResponse url <$> fetch url
-
-check :: [Link] -> IO [(Link, LinkStatus)]
-check links = sequence (broken <$> links)
+check :: Link -> IO Link
+check lnk = codeToResponse lnk <$> fetch (getURL lnk)

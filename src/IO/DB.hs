@@ -2,8 +2,8 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module IO.DB
-    ( load
-    , cache
+    ( getCached
+    , setCached
     ) where
 
 import ClassyPrelude
@@ -13,8 +13,8 @@ import Data.Time.Clock       (NominalDiffTime)
 import Data.Time.Clock.POSIX (getPOSIXTime)
 import System.Directory      (doesFileExist)
 
-import Parser.DB    (db)
-import Parser.Links (Link)
+import Parser.DB  (db)
+import Types.Link (URL)
 
 path :: String
 path = ".brokdb"
@@ -24,36 +24,39 @@ path = ".brokdb"
 age :: NominalDiffTime
 age = 86400
 
-removeOld :: [(Link, Integer)] -> IO [(Link, Integer)]
+removeOld :: [(URL, Integer)] -> IO [(URL, Integer)]
 removeOld cached = do
     timestamp <- getPOSIXTime
     return $ filter (\(_, x) -> timestamp - fromInteger x < age) cached
 
--- write db
-linkToText :: (Link, Integer) -> Text
-linkToText (lnk, int) = concat [lnk, " ", tshow int]
-
-write :: [(Link, Integer)] -> IO ()
-write links = writeFile path . encodeUtf8 . unlines $ linkToText <$> links
-
-stamp :: Link -> IO (Link, Integer)
+stamp :: URL -> IO (URL, Integer)
 stamp lnk = do
     timestamp <- round <$> getPOSIXTime
     return (lnk, timestamp)
 
-cache :: [Link] -> IO ()
-cache links = do
+-- write db
+linkToText :: (URL, Integer) -> Text
+linkToText (lnk, int) = concat [lnk, " ", tshow int]
+
+write :: [(URL, Integer)] -> IO ()
+write links = writeFile path . encodeUtf8 . unlines $ linkToText <$> links
+
+setCached :: [URL] -> IO ()
+setCached links = do
     current <- load
     stamped <- sequence (stamp <$> links)
     write $ current ++ stamped
 
 -- read db
-read :: FilePath -> IO [(Link, Integer)]
+read :: FilePath -> IO [(URL, Integer)]
 read filepath = removeOld =<< fromRight [] . db . decodeUtf8 <$> readFile filepath
 
-load :: IO [(Link, Integer)]
+load :: IO [(URL, Integer)]
 load = do
     exists <- doesFileExist path
     if exists
         then read path
         else return []
+
+getCached :: IO [URL]
+getCached = (fst <$>) <$> load
