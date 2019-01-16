@@ -9,6 +9,8 @@
 - Should detect if internet connection is down
 - Should be able to ignore specific URLs
     > Could add a URL to .brokdb with a far future timestamp?
+- Option for interval between requests
+- Option for cache length
 
 ## Bugs
 
