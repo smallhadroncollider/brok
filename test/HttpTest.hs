@@ -8,8 +8,8 @@ import ClassyPrelude
 import Test.Tasty
 import Test.Tasty.HUnit
 
-import IO.Http    (check)
-import Types.Link (Link (Link), LinkType (Working), urlToLink)
+import Brok.IO.Http    (check)
+import Brok.Types.Link (Link (Link), LinkType (Working), urlToLink)
 
 test_http :: TestTree
 test_http =

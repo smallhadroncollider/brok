@@ -12,7 +12,7 @@ import Test.Tasty.HUnit
 
 import Data.FileEmbed (embedFile)
 
-import Parser.Links (links)
+import Brok.Parser.Links (links)
 
 markdown :: Text
 markdown = decodeUtf8 $(embedFile "test/data/links.md")

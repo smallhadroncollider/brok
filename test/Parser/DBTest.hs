@@ -12,7 +12,7 @@ import Test.Tasty.HUnit
 import Data.Either    (fromRight, isLeft)
 import Data.FileEmbed (embedFile)
 
-import Parser.DB (db)
+import Brok.Parser.DB (db)
 
 content :: Text
 content = decodeUtf8 $(embedFile "test/data/.brokdb")

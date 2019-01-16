@@ -1,7 +1,7 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Parser.Links
+module Brok.Parser.Links
     ( links
     , url
     ) where
@@ -10,8 +10,8 @@ import ClassyPrelude
 
 import Data.List (nub)
 
-import Parser.Parsec
-import Types.Link    (URL)
+import Brok.Parser.Parsec
+import Brok.Types.Link    (URL)
 
 type Token = Maybe URL
 

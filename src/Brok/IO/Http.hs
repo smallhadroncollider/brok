@@ -1,7 +1,7 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module IO.Http
+module Brok.IO.Http
     ( check
     ) where
 
@@ -10,8 +10,8 @@ import ClassyPrelude
 import Network.HTTP.Simple (HttpException, Request, addRequestHeader, getResponseStatusCode,
                             httpNoBody, parseRequest, setRequestMethod)
 
-import IO.CLI     (replace)
-import Types.Link
+import Brok.IO.CLI     (replace)
+import Brok.Types.Link
 
 type StatusCode = Either HttpException Int
 

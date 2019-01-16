@@ -1,15 +1,15 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Parser.DB
+module Brok.Parser.DB
     ( db
     ) where
 
 import ClassyPrelude
 
-import Parser.Links  (url)
-import Parser.Parsec
-import Types.Link
+import Brok.Parser.Links  (url)
+import Brok.Parser.Parsec
+import Brok.Types.Link
 
 line :: Parser (URL, Integer)
 line = do

@@ -1,6 +1,6 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 
-module IO.Document
+module Brok.IO.Document
     ( TFilePath
     , readContent
     ) where
@@ -8,7 +8,8 @@ module IO.Document
 import ClassyPrelude
 
 import System.Directory (doesFileExist)
-import Types.Result
+
+import Brok.Types.Result
 
 readContent :: Result -> IO Result
 readContent result = do

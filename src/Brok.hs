@@ -9,14 +9,14 @@ import ClassyPrelude
 
 import System.Exit (exitFailure, exitSuccess)
 
-import IO.CLI       (header, replace)
-import IO.DB        (getCached, setCached)
-import IO.Document  (readContent)
-import IO.Http      (check)
-import IO.Output    (output)
-import Parser.Links (links)
-import Types.Link   (getURL, isSuccess)
-import Types.Result (cachedLinks, justLinks, linkIOMap, parseLinks, pathToResult)
+import Brok.IO.CLI       (header, replace)
+import Brok.IO.DB        (getCached, setCached)
+import Brok.IO.Document  (readContent)
+import Brok.IO.Http      (check)
+import Brok.IO.Output    (output)
+import Brok.Parser.Links (links)
+import Brok.Types.Link   (getURL, isSuccess)
+import Brok.Types.Result (cachedLinks, justLinks, linkIOMap, parseLinks, pathToResult)
 
 -- entry point
 brok :: IO ()

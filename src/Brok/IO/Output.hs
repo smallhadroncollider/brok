@@ -1,15 +1,15 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module IO.Output
+module Brok.IO.Output
     ( output
     ) where
 
 import ClassyPrelude
 
-import IO.CLI
-import Types.Link
-import Types.Result
+import Brok.IO.CLI
+import Brok.Types.Link
+import Brok.Types.Result
 
 -- output
 linkOutput :: Link -> IO ()

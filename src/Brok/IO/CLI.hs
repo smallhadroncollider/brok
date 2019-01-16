@@ -1,7 +1,7 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module IO.CLI where
+module Brok.IO.CLI where
 
 import ClassyPrelude
 

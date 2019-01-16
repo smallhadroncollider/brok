@@ -1,7 +1,7 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module IO.DB
+module Brok.IO.DB
     ( getCached
     , setCached
     ) where
@@ -13,8 +13,8 @@ import Data.Time.Clock       (NominalDiffTime)
 import Data.Time.Clock.POSIX (getPOSIXTime)
 import System.Directory      (doesFileExist)
 
-import Parser.DB  (db)
-import Types.Link (URL)
+import Brok.Parser.DB  (db)
+import Brok.Types.Link (URL)
 
 path :: String
 path = ".brokdb"

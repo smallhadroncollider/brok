@@ -1,10 +1,10 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 
-module Types.Result where
+module Brok.Types.Result where
 
 import ClassyPrelude
 
-import Types.Link
+import Brok.Types.Link
 
 type TFilePath = Text
 

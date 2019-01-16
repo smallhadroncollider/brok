@@ -1,6 +1,6 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 
-module Types.Link where
+module Brok.Types.Link where
 
 import ClassyPrelude
 

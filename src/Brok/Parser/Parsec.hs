@@ -1,7 +1,7 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Parser.Parsec
+module Brok.Parser.Parsec
     ( Parser
     , alphaNum
     , anyToken
