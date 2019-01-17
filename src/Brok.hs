@@ -18,9 +18,10 @@ import           Brok.IO.Http      (check)
 import           Brok.IO.Output    (output)
 import           Brok.Options      (parse)
 import           Brok.Parser.Links (links)
-import qualified Brok.Types.Config as C (Config, cache, files, interval)
+import qualified Brok.Types.Config as C (Config, cache, files, ignore, interval)
 import           Brok.Types.Link   (getURL, isSuccess)
-import           Brok.Types.Result (cachedLinks, justLinks, linkIOMap, parseLinks, pathToResult)
+import           Brok.Types.Result (cachedLinks, ignoredLinks, justLinks, linkIOMap, parseLinks,
+                                    pathToResult)
 
 go :: C.Config -> IO ()
 go config
@@ -31,11 +32,11 @@ go config
     let parsed = parseLinks links <$> content
     -- check cached successes
     cached <- getCached (C.cache config)
-    let cache = cachedLinks cached <$> parsed
+    let uncached = cachedLinks cached . ignoredLinks (C.ignore config) <$> parsed
     -- check links in each file
     header "Checking URLs"
     putStrLn ""
-    checked <- sequence (linkIOMap (check (C.interval config)) <$> cache)
+    checked <- sequence (linkIOMap (check (C.interval config)) <$> uncached)
     replace "Fetching complete"
     -- display results
     putStrLn ""

@@ -44,9 +44,15 @@ parseLinks fn (Result path (Content text)) =
         Right links -> Result path (Links $ urlToLink <$> links)
 parseLinks _ result = result
 
+findLinks :: ([URL] -> Link -> Link) -> [URL] -> Result -> Result
+findLinks fn urls (Result path (Links links)) = Result path (Links $ fn urls <$> links)
+findLinks _ _ result                          = result
+
 cachedLinks :: [URL] -> Result -> Result
-cachedLinks cached (Result path (Links links)) = Result path (Links $ cachedLink cached <$> links)
-cachedLinks _ result                           = result
+cachedLinks = findLinks cachedLink
+
+ignoredLinks :: [URL] -> Result -> Result
+ignoredLinks = findLinks ignoredLink
 
 linkIOMap :: (Link -> IO Link) -> Result -> IO Result
 linkIOMap fn (Result path (Links links)) = Result path . Links <$> sequence (lmap fn <$> links)

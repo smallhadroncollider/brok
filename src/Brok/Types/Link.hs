@@ -9,6 +9,7 @@ type URL = Text
 data LinkType
     = BareLink
     | Cached
+    | Ignored
     | Working Int
     | Broken Int
     | ConnectionFailure
@@ -37,12 +38,18 @@ failure :: Link -> Link
 failure (Link url BareLink) = Link url ConnectionFailure
 failure lnk                 = lnk
 
-cachedLink :: [URL] -> Link -> Link
-cachedLink cached (Link url BareLink) =
-    case find (== url) cached of
-        Just _  -> Link url Cached
+findLink :: LinkType -> (URL -> URL -> Bool) -> [URL] -> Link -> Link
+findLink lType fn urls (Link url BareLink) =
+    case find (fn url) urls of
+        Just _  -> Link url lType
         Nothing -> Link url BareLink
-cachedLink _ lnk = lnk
+findLink _ _ _ lnk = lnk
+
+cachedLink :: [URL] -> Link -> Link
+cachedLink = findLink Cached (==)
+
+ignoredLink :: [URL] -> Link -> Link
+ignoredLink = findLink Ignored (flip isPrefixOf)
 
 isSuccess :: Link -> Bool
 isSuccess (Link _ (Working _)) = True

@@ -14,6 +14,7 @@ import Brok.Types.Result
 -- output
 linkOutput :: Link -> IO ()
 linkOutput (Link url BareLink)          = splitErr "- Failed (unknown)" url
+linkOutput (Link url Ignored)           = mehssage $ "- Ignored: " ++ url
 linkOutput (Link url Cached)            = splitOut "- OK (cached)" url
 linkOutput (Link url (Working code))    = splitOut ("- OK (" ++ tshow code ++ ")") url
 linkOutput (Link url (Broken code))     = splitErr ("- Failed (" ++ tshow code ++ ")") url
@@ -22,6 +23,7 @@ linkOutput (Link url ConnectionFailure) = splitErr "- Could not connect" url
 statusError :: Link -> Bool
 statusError (Link _ (Working _)) = False
 statusError (Link _ Cached)      = False
+statusError (Link _ Ignored)     = False
 statusError _                    = True
 
 countErrors :: [Link] -> Int

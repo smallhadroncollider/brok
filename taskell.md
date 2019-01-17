@@ -16,8 +16,6 @@
 
 ## In Progress
 
-- Should be able to ignore specific URLs
-    > Could add a URL to .brokdb with a far future timestamp?
 
 ## Done
 
@@ -29,3 +27,5 @@
 - Option for cache length
 - Should space out requests
 - Option for interval between requests
+- Should be able to ignore specific URLs
+    > List of URL prefixes

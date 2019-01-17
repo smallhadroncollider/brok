@@ -6,13 +6,19 @@ module Brok.IO.CLI where
 import ClassyPrelude
 
 import Data.Text.IO        (hPutStr, hPutStrLn)
-import System.Console.ANSI (Color (Blue, Green, Magenta, Red), ColorIntensity (Dull),
+import System.Console.ANSI (Color (Blue, Green, Magenta, Red, Yellow), ColorIntensity (Dull),
                             ConsoleLayer (Foreground), SGR (Reset, SetColor), hClearLine,
                             hCursorUpLine, hSetSGR)
 
 message :: Text -> IO ()
 message msg = do
     hSetSGR stdout [SetColor Foreground Dull Blue]
+    hPutStrLn stdout msg
+    hSetSGR stdout [Reset]
+
+mehssage :: Text -> IO ()
+mehssage msg = do
+    hSetSGR stdout [SetColor Foreground Dull Yellow]
     hPutStrLn stdout msg
     hSetSGR stdout [Reset]
 
@@ -48,6 +54,9 @@ splitErr = split stderr Red
 
 splitOut :: Text -> Text -> IO ()
 splitOut = split stdout Green
+
+splitMeh :: Text -> Text -> IO ()
+splitMeh = split stdout Yellow
 
 replace :: Text -> IO ()
 replace msg = do
