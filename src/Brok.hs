@@ -11,27 +11,26 @@ import ClassyPrelude
 import Data.FileEmbed (embedFile)
 import System.Exit    (exitFailure, exitSuccess)
 
-import Brok.IO.CLI       (header, replace)
-import Brok.IO.DB        (getCached, setCached)
-import Brok.IO.Document  (readContent)
-import Brok.IO.Http      (check)
-import Brok.IO.Output    (output)
-import Brok.Options      (parse)
-import Brok.Parser.Links (links)
-import Brok.Types.Config (Config, files)
-import Brok.Types.Link   (getURL, isSuccess)
-import Brok.Types.Result (cachedLinks, justLinks, linkIOMap, parseLinks, pathToResult)
+import           Brok.IO.CLI       (header, replace)
+import           Brok.IO.DB        (getCached, setCached)
+import           Brok.IO.Document  (readContent)
+import           Brok.IO.Http      (check)
+import           Brok.IO.Output    (output)
+import           Brok.Options      (parse)
+import           Brok.Parser.Links (links)
+import qualified Brok.Types.Config as C (Config, cache, files)
+import           Brok.Types.Link   (getURL, isSuccess)
+import           Brok.Types.Result (cachedLinks, justLinks, linkIOMap, parseLinks, pathToResult)
 
-go :: Config -> IO ()
+go :: C.Config -> IO ()
 go config
     -- read files
  = do
-    let fls = files config
-    content <- sequence (readContent . pathToResult <$> fls)
+    content <- sequence (readContent . pathToResult <$> C.files config)
     -- find links in each file
     let parsed = parseLinks links <$> content
     -- check cached successes
-    cached <- getCached
+    cached <- getCached (C.cache config)
     let cache = cachedLinks cached <$> parsed
     -- check links in each file
     header "Checking URLs"
@@ -43,7 +42,7 @@ go config
     header "Results"
     anyErrors <- sequence $ output <$> checked
     -- cache successes
-    setCached $ getURL <$> filter isSuccess (concat (justLinks <$> checked))
+    setCached (C.cache config) $ getURL <$> filter isSuccess (concat (justLinks <$> checked))
     -- exit with appropriate status code
     if foldl' (||) False anyErrors
         then void exitFailure

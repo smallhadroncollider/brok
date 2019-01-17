@@ -9,7 +9,6 @@ module Brok.IO.DB
 import ClassyPrelude
 
 import Data.Either           (fromRight)
-import Data.Time.Clock       (NominalDiffTime)
 import Data.Time.Clock.POSIX (getPOSIXTime)
 import System.Directory      (doesFileExist)
 
@@ -19,15 +18,11 @@ import Brok.Types.Link (URL)
 path :: String
 path = ".brokdb"
 
--- how long to cache links for
--- in seconds
-age :: NominalDiffTime
-age = 86400
-
-removeOld :: [(URL, Integer)] -> IO [(URL, Integer)]
-removeOld cached = do
+-- time stuff
+removeOld :: Integer -> [(URL, Integer)] -> IO [(URL, Integer)]
+removeOld age cached = do
     timestamp <- getPOSIXTime
-    return $ filter ((\val -> timestamp - val < age) . fromInteger . snd) cached
+    return $ filter ((\val -> timestamp - val < fromInteger age) . fromInteger . snd) cached
 
 stamp :: URL -> IO (URL, Integer)
 stamp lnk = do
@@ -41,22 +36,22 @@ linkToText (lnk, int) = concat [lnk, " ", tshow int]
 write :: [(URL, Integer)] -> IO ()
 write links = writeFile path . encodeUtf8 . unlines $ linkToText <$> links
 
-setCached :: [URL] -> IO ()
-setCached links = do
-    current <- load
+setCached :: Integer -> [URL] -> IO ()
+setCached age links = do
+    current <- load age
     stamped <- sequence (stamp <$> links)
     write $ current ++ stamped
 
 -- read db
-read :: FilePath -> IO [(URL, Integer)]
-read filepath = removeOld =<< fromRight [] . db . decodeUtf8 <$> readFile filepath
+read :: Integer -> FilePath -> IO [(URL, Integer)]
+read age filepath = removeOld age =<< fromRight [] . db . decodeUtf8 <$> readFile filepath
 
-load :: IO [(URL, Integer)]
-load = do
+load :: Integer -> IO [(URL, Integer)]
+load age = do
     exists <- doesFileExist path
     if exists
-        then read path
+        then read age path
         else return []
 
-getCached :: IO [URL]
-getCached = (fst <$>) <$> load
+getCached :: Integer -> IO [URL]
+getCached age = (fst <$>) <$> load age

@@ -5,12 +5,8 @@
 
 ## Features
 
-- Should space out requests
 - Should detect if internet connection is down
-- Should be able to ignore specific URLs
-    > Could add a URL to .brokdb with a far future timestamp?
-- Option for interval between requests
-- Option for cache length
+- Cache length option should accept units: s, m, h, d - default to s
 
 ## Bugs
 
@@ -18,6 +14,10 @@
 
 ## In Progress
 
+- Should space out requests
+- Should be able to ignore specific URLs
+    > Could add a URL to .brokdb with a far future timestamp?
+- Option for interval between requests
 
 ## Done
 
@@ -26,3 +26,4 @@
 - Should output file that problem occured in
 - Should return correct exit code
 - Should store recently tested links in .brokdb file
+- Option for cache length
