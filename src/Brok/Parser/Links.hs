@@ -8,10 +8,11 @@ module Brok.Parser.Links
 
 import ClassyPrelude
 
-import Data.List (nub)
+import Data.Attoparsec.Text
+import Data.List            (nub)
 
-import Brok.Parser.Parsec
-import Brok.Types.Link    (URL)
+import Brok.Parser.Attoparsec
+import Brok.Types.Link        (URL)
 
 type Token = Maybe URL
 
@@ -21,24 +22,24 @@ parens parser = surround '(' ')' parser <|> surround '[' ']' parser
 
 -- urls
 urlChar :: Parser Char
-urlChar = alphaNum <|> oneOf "-._~:/?#%@!$&*+,;="
+urlChar = digit <|> letter <|> choice (char <$> "-._~:/?#%@!$&*+,;=")
 
 urlChars :: Parser Text
 urlChars = concat <$> many1 (parens urlChars <|> (pack <$> many1 urlChar))
 
 url :: Parser Text
-url = concat4 <$> text "http" <*> chopt 's' <*> text "://" <*> urlChars
+url = concat4 <$> string "http" <*> chopt 's' <*> string "://" <*> urlChars
 
 noise :: Parser Token
-noise = anyToken >> return Nothing
+noise = anyChar >> return Nothing
 
 urls :: Parser [URL]
-urls = nub . catMaybes <$> many1 ((Just <$> try1 url) <|> noise)
+urls = nub . catMaybes <$> many1 ((Just <$> url) <|> noise)
 
 -- run parser
 links :: Text -> Either Text [URL]
 links "" = Right []
 links content =
-    case parse urls "" content of
+    case parseOnly urls content of
         Right c -> Right c
         Left e  -> Left $ tshow e

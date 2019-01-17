@@ -31,10 +31,10 @@ library:
   source-dirs: src
   dependencies:
   - ansi-terminal
+  - attoparsec
   - directory
   - http-conduit
   - http-client
-  - parsec
   - text
   - time
 

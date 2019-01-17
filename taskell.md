@@ -1,7 +1,5 @@
 ## Refactoring
 
-- Use attoparsec
-    > Already used by HTTP-conduit, so may as well use it
 
 ## Features
 
@@ -12,7 +10,7 @@
 ## Bugs
 
 - Can't parse links containing single quote marks
-- Shouldn't delay if only a single URL being checked
+- Edge case: shouldn't delay if only a single URL being checked
 
 ## In Progress
 
@@ -30,3 +28,5 @@
 - Should be able to ignore specific URLs
     > List of URL prefixes
 - --help command
+- Use attoparsec
+    > Already used by HTTP-conduit, so may as well use it

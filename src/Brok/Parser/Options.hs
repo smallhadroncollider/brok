@@ -7,10 +7,12 @@ module Brok.Parser.Options
 
 import ClassyPrelude
 
-import Brok.Parser.Links  (url)
-import Brok.Parser.Parsec
+import Data.Attoparsec.Text
+
+import Brok.Parser.Attoparsec
+import Brok.Parser.Links      (url)
 import Brok.Types.Config
-import Brok.Types.Next    (Next (..))
+import Brok.Types.Next        (Next (..))
 
 data Option
     = Cache Integer
@@ -23,20 +25,20 @@ readInt arg value =
     maybe (fail $ "Unable to parse " ++ arg ++ " value") return (readMay value :: Maybe Integer)
 
 cacheP :: Parser Option
-cacheP = lexeme $ Cache <$> (text "--cache" *> char '\n' *> many1 digit >>= readInt "cache")
+cacheP = lexeme $ Cache <$> (string "--cache" *> char '\n' *> many1 digit >>= readInt "cache")
 
 intervalP :: Parser Option
 intervalP =
-    lexeme $ Interval <$> (text "--interval" *> char '\n' *> many1 digit >>= readInt "interval")
+    lexeme $ Interval <$> (string "--interval" *> char '\n' *> many1 digit >>= readInt "interval")
 
 urlP :: Parser Text
 urlP = lexeme url
 
 ignoreP :: Parser Option
-ignoreP = lexeme $ Ignore <$> (text "--ignore" *> char '\n' *> many1 urlP)
+ignoreP = lexeme $ Ignore <$> (string "--ignore" *> char '\n' *> many1 urlP)
 
 fileP :: Parser Text
-fileP = lexeme $ pack <$> many1 (noneOf "\n")
+fileP = lexeme $ pack <$> many1 (notChar '\n')
 
 optsToConfig :: [Option] -> Config
 optsToConfig = foldl' convert defaultConfig
@@ -48,23 +50,20 @@ optsToConfig = foldl' convert defaultConfig
 
 arguments :: Parser Config
 arguments = do
-    opts <- optionMaybe $ many1 (try1 cacheP <|> try1 intervalP <|> try1 ignoreP)
+    opts <- many' (cacheP <|> intervalP <|> ignoreP)
     fls <- many1 fileP
-    return . optsToConfig $
-        case opts of
-            Just opts' -> opts' ++ [Files fls]
-            Nothing    -> [Files fls]
+    return . optsToConfig $ opts ++ [Files fls]
 
 helpP :: Parser Next
-helpP = lexeme $ (try1 (text "--help") <|> text "-h") $> Help
+helpP = lexeme $ (string "--help" <|> string "-h") $> Help
 
 next :: Parser Next
-next = try1 helpP <|> (Continue <$> arguments)
+next = helpP <|> (Continue <$> arguments)
 
 -- run parser
 options :: [Text] -> Either Text Next
 options [] = Left "No files provided"
 options content =
-    case parse next "" (unlines content) of
+    case parseOnly next (unlines content) of
         Right c -> Right c
         Left e  -> Left $ tshow e

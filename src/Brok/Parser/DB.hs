@@ -7,8 +7,9 @@ module Brok.Parser.DB
 
 import ClassyPrelude
 
-import Brok.Parser.Links  (url)
-import Brok.Parser.Parsec
+import Data.Attoparsec.Text
+
+import Brok.Parser.Links (url)
 import Brok.Types.Link
 
 line :: Parser (URL, Integer)
@@ -28,6 +29,6 @@ entries = many1 line
 db :: Text -> Either Text [(URL, Integer)]
 db "" = Right []
 db content =
-    case parse entries "" content of
+    case parseOnly entries content of
         Right c -> Right c
         Left e  -> Left $ tshow e
