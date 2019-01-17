@@ -7,17 +7,17 @@
 
 - Should detect if internet connection is down
 - Cache length option should accept units: s, m, h, d - default to s
+- --help command
 
 ## Bugs
 
 - Can't parse links containing single quote marks
+- Shouldn't delay if only a single URL being checked
 
 ## In Progress
 
-- Should space out requests
 - Should be able to ignore specific URLs
     > Could add a URL to .brokdb with a far future timestamp?
-- Option for interval between requests
 
 ## Done
 
@@ -27,3 +27,5 @@
 - Should return correct exit code
 - Should store recently tested links in .brokdb file
 - Option for cache length
+- Should space out requests
+- Option for interval between requests

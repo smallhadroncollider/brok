@@ -3,5 +3,5 @@ Usage: brok [--cache SECONDS] [--interval MILLISECONDS] [--ignore URLS] FILES
 Options:
 
 --cache SECONDS           The number of seconds to cache successful results for (default: 86400)
---interval MILLISECONDS   The number of milliseconds between each request (default: 20)
+--interval MILLISECONDS   The number of milliseconds between each request (default: 100)
 --ignore URLS             A list of URL prefixes to ignore

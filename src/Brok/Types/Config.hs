@@ -14,4 +14,4 @@ data Config = Config
     } deriving (Show, Eq)
 
 defaultConfig :: Config
-defaultConfig = Config {cache = 84600, ignore = [], interval = 20, files = []}
+defaultConfig = Config {cache = 84600, ignore = [], interval = 100, files = []}
