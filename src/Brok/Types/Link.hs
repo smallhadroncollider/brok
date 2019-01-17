@@ -12,6 +12,7 @@ data LinkType
     | Ignored
     | Working Int
     | Broken Int
+    | InvalidURL
     | ConnectionFailure
     deriving (Show, Eq)
 
@@ -37,6 +38,10 @@ broken lnk _                    = lnk
 failure :: Link -> Link
 failure (Link url BareLink) = Link url ConnectionFailure
 failure lnk                 = lnk
+
+invalid :: Link -> Link
+invalid (Link url BareLink) = Link url InvalidURL
+invalid lnk                 = lnk
 
 findLink :: LinkType -> (URL -> URL -> Bool) -> [URL] -> Link -> Link
 findLink lType fn urls (Link url BareLink) =

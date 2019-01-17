@@ -19,6 +19,7 @@ linkOutput (Link url Cached)            = splitOut "- OK (cached)" url
 linkOutput (Link url (Working code))    = splitOut ("- OK (" ++ tshow code ++ ")") url
 linkOutput (Link url (Broken code))     = splitErr ("- Failed (" ++ tshow code ++ ")") url
 linkOutput (Link url ConnectionFailure) = splitErr "- Could not connect" url
+linkOutput (Link url InvalidURL)        = splitErr "- Invalid URL" url
 
 statusError :: Link -> Bool
 statusError (Link _ (Working _)) = False

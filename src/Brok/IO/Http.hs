@@ -8,8 +8,8 @@ module Brok.IO.Http
 import ClassyPrelude
 
 import Control.Concurrent  (threadDelay)
-import Network.HTTP.Simple (HttpException, Request, addRequestHeader, getResponseStatusCode,
-                            httpNoBody, parseRequest, setRequestMethod)
+import Network.HTTP.Simple (HttpException, HttpException (..), Request, addRequestHeader,
+                            getResponseStatusCode, httpNoBody, parseRequest, setRequestMethod)
 
 import Brok.IO.CLI     (replace)
 import Brok.Types.Link
@@ -20,10 +20,11 @@ setHeaders :: Request -> Request
 setHeaders = addRequestHeader "User-Agent" "smallhadroncollider/brok"
 
 makeRequest :: Integer -> ByteString -> URL -> IO StatusCode
-makeRequest delay method url = do
-    request <- setHeaders . setRequestMethod method <$> parseRequest (unpack url)
-    threadDelay (fromIntegral delay * 1000) -- wait for a little while
-    (getResponseStatusCode <$>) <$> try (httpNoBody request)
+makeRequest delay method url =
+    try $ do
+        request <- setHeaders . setRequestMethod method <$> parseRequest (unpack url)
+        threadDelay (fromIntegral delay * 1000) -- wait for a little while
+        getResponseStatusCode <$> httpNoBody request
 
 tryWithGet :: Integer -> URL -> StatusCode -> IO StatusCode
 tryWithGet delay url (Right code)
@@ -41,7 +42,8 @@ codeToResponse :: Link -> StatusCode -> Link
 codeToResponse lnk (Right code)
     | code >= 200 && code < 300 = working lnk code
     | otherwise = broken lnk code
-codeToResponse lnk (Left _) = failure lnk
+codeToResponse lnk (Left (HttpExceptionRequest _ _)) = failure lnk
+codeToResponse lnk (Left (InvalidUrlException _ _)) = invalid lnk
 
 check :: Integer -> Link -> IO Link
 check delay lnk = codeToResponse lnk <$> fetch delay (getURL lnk)
