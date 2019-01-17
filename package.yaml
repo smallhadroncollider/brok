@@ -1,0 +1,65 @@
+name:                brok
+version:             0.1.0.0
+github:              "smallhadroncollider/brok"
+license:             BSD3
+author:              "Small Hadron Collider"
+maintainer:          "mark@smallhadroncollider.com"
+copyright:           "2019 Small Hadron Collider"
+
+extra-source-files:
+- README.md
+
+# Metadata used when publishing your package
+synopsis:            Finds broken links in text files
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/smallhadroncollider/brok#readme>
+
+default-extensions:
+- OverloadedStrings
+- NoImplicitPrelude
+
+dependencies:
+- base >= 4.7 && < 5
+- classy-prelude
+- file-embed
+
+library:
+  source-dirs: src
+  dependencies:
+  - ansi-terminal
+  - attoparsec
+  - directory
+  - http-conduit
+  - http-client
+  - text
+  - time
+
+executables:
+  brok:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - brok
+
+tests:
+  brok-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - brok
+    - tasty
+    - tasty-discover
+    - tasty-hunit
+    - tasty-expected-failure
