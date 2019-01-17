@@ -1,15 +1,15 @@
-## Refactoring
-
-
 ## Features
 
 - Should detect if internet connection is down
 - Cache length option should accept units: s, m, h, d - default to s
 - Should be able to detect links without http:// or https:// prefixes
 - More detailed HttpException errors
+- Parallel HTTP fetch for separate domains
 
 ## Bugs
 
+- Is an invalid URL an error?
+    > Should an invalid URL count as an error? The parser shouldn't really pick up invalid URLs. But if it looks like one and fails then it is probably worth high-lighting.
 - Can't parse links containing single quote marks
 - Fetching message sometimes goes to more than one line, so next line doesn't replace it (saveCursor/restoreCursor?)
 - Edge case: shouldn't delay if only a single URL being checked
