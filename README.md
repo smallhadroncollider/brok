@@ -10,6 +10,14 @@ Currently only supports `http://` and `https://` prefixed URLs
 
 ## Install
 
+[Binaries for Mac and Linux are available](https://github.com/smallhadroncollider/brok/releases). Add the binary to a directory in your path (such as `/usr/local/bin`).
+
+### Building
+
+**Requirements**: [Stack](https://docs.haskellstack.org/en/stable/README/)
+
+The following command will build brök and then install it in `~/.local/bin`:
+
 ```bash
 stack build && stack install
 ```
