@@ -37,6 +37,17 @@ test_http =
                        "https://code.tutsplus.com/tutorials/stateful-vs-stateless-functional-components-in-react--cms-29541"
                        (Working 200))
                   result
+        , testCase "Random blog (404 on a HEAD request)" $ do
+              result <-
+                  check 0 $
+                  urlToLink
+                      "https://blog.infinitenegativeutility.com/2017/12/some-notes-about-how-i-write-haskell"
+              assertEqual
+                  "Returns a 200"
+                  (Link
+                       "https://blog.infinitenegativeutility.com/2017/12/some-notes-about-how-i-write-haskell"
+                       (Working 200))
+                  result
         , testCase "Non-existant site" $ do
               result <- check 0 $ urlToLink "http://askdjfhaksjdhfkajsdfh.com"
               assertEqual
