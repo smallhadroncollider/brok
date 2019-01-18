@@ -28,11 +28,9 @@ makeRequest delay method url =
 
 tryWithGet :: Integer -> URL -> StatusCode -> IO StatusCode
 tryWithGet delay url (Right code)
-    -- various 400/500 errors mean HEAD support doesn't work 
-    -- so try with GET instead 
-    | code >= 400 && code /= 404 = makeRequest delay "GET" url
+    | code >= 400 = makeRequest delay "GET" url
     | otherwise = return (Right code)
-tryWithGet _ _ sc = return sc
+tryWithGet delay url (Left _) = makeRequest delay "GET" url
 
 fetch :: Integer -> URL -> IO StatusCode
 fetch delay url =
