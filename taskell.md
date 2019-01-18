@@ -12,6 +12,7 @@
     > Should an invalid URL count as an error? The parser shouldn't really pick up invalid URLs. But if it looks like one and fails then it is probably worth high-lighting.
 - Can't parse links containing single quote marks
 - Fetching message sometimes goes to more than one line, so next line doesn't replace it (saveCursor/restoreCursor?)
+- Checks the same URL multiple times if in different files
 - Edge case: shouldn't delay if only a single URL being checked
 
 ## In Progress
@@ -33,3 +34,4 @@
 - Use attoparsec
     > Already used by HTTP-conduit, so may as well use it
 - Fixed InvalidURLException crash
+- Fixed issue with HEAD request returning a 404
