@@ -11,7 +11,7 @@ extra-source-files:
 
 # Metadata used when publishing your package
 synopsis:            Finds broken links in text files
-# category:            Web
+category:            Command Line Tools
 
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is

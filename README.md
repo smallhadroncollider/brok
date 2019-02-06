@@ -12,6 +12,16 @@ Currently only supports `http://` and `https://` prefixed URLs
 
 [Binaries for Mac and Linux are available](https://github.com/smallhadroncollider/brok/releases). Add the binary to a directory in your path (such as `/usr/local/bin`).
 
+### Cabal
+
+If you have `cabal` installed:
+
+```bash
+cabal install brok
+```
+
+Make sure you run `cabal update` if you haven't run it recently.
+
 ### Building
 
 **Requirements**: [Stack](https://docs.haskellstack.org/en/stable/README/)
