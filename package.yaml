@@ -1,5 +1,5 @@
 name:                brok
-version:             0.1.2.0
+version:             0.1.3.0
 github:              "smallhadroncollider/brok"
 license:             BSD3
 author:              "Small Hadron Collider"
@@ -8,6 +8,7 @@ copyright:           "2019 Small Hadron Collider"
 
 extra-source-files:
 - README.md
+- template/*
 
 # Metadata used when publishing your package
 synopsis:            Finds broken links in text files
