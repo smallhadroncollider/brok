@@ -8,6 +8,7 @@ copyright:           "2019 Small Hadron Collider"
 
 extra-source-files:
 - README.md
+- template/*
 
 # Metadata used when publishing your package
 synopsis:            Finds broken links in text files
