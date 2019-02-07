@@ -42,6 +42,15 @@ test_parser =
                          (Right ["https://google.com"])
                          (links "https://google.com"))
               , testCase
+                    "just long link"
+                    (assertEqual
+                         "Gives back full URL"
+                         (Right
+                              [ "https://developmentarc.gitbooks.io/react-indepth/content/life_cycle/the_life_cycle_recap.html"
+                              ])
+                         (links
+                              "https://developmentarc.gitbooks.io/react-indepth/content/life_cycle/the_life_cycle_recap.html"))
+              , testCase
                     "http link with surrounding text"
                     (assertEqual
                          "Gives back google.com"
@@ -61,6 +70,13 @@ test_parser =
                          (links "[A link](http://google.com)"))
               , testCase
                     "link with brackets"
+                    (assertEqual
+                         "Gives back google.com"
+                         (Right ["https://en.wikipedia.org/wiki/Word_(computer_architecture)"])
+                         (links
+                              "[A link](https://en.wikipedia.org/wiki/Word_(computer_architecture))"))
+              , testCase
+                    "link with brackets in query"
                     (assertEqual
                          "Gives back google.com"
                          (Right ["http://google.com?q=(fish)"])
@@ -91,6 +107,12 @@ test_parser =
                          "Gives back google.com"
                          (Right ["http://google.com?q=fish"])
                          (links "'http://google.com?q=fish'"))
+              , testCase
+                    "link with comma on end"
+                    (assertEqual
+                         "Gives back google.com"
+                         (Right ["http://google.com"])
+                         (links "testing http://google.com, here"))
               ]
         , testGroup
               "multiple links"

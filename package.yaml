@@ -1,5 +1,5 @@
 name:                brok
-version:             0.1.3.0
+version:             0.1.4.0
 github:              "smallhadroncollider/brok"
 license:             BSD3
 author:              "Small Hadron Collider"
@@ -12,7 +12,7 @@ extra-source-files:
 
 # Metadata used when publishing your package
 synopsis:            Finds broken links in text files
-# category:            Web
+category:            Command Line Tools
 
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
