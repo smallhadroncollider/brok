@@ -16,19 +16,30 @@ import Brok.Types.Link        (URL)
 
 type Token = Maybe URL
 
+preQueryChars :: String
+preQueryChars = "-._~:/#%@"
+
+queryBodyChars :: String
+queryBodyChars = "-._~:/#%@!$&*+,;="
+
+chars :: String -> Parser Char
+chars chrs = digit <|> letter <|> choice (char <$> chrs)
+
 -- parentheses
 parens :: Parser Text -> Parser Text
 parens parser = surround '(' ')' parser <|> surround '[' ']' parser
 
 -- urls
-urlChar :: Parser Char
-urlChar = digit <|> letter <|> choice (char <$> "-._~:/?#%@!$&*+,;=")
+part :: String -> Parser Text
+part str = concat <$> many' (parens (part str) <|> manyChars (chars str))
 
-urlChars :: Parser Text
-urlChars = concat <$> many1 (parens urlChars <|> (pack <$> many1 urlChar))
+query :: Parser Text
+query = (++) <$> string "?" <*> part queryBodyChars
 
 url :: Parser Text
-url = concat4 <$> string "http" <*> chopt 's' <*> string "://" <*> urlChars
+url =
+    concat5 <$> string "http" <*> chopt 's' <*> string "://" <*> part preQueryChars <*>
+    option "" query
 
 noise :: Parser Token
 noise = anyChar >> return Nothing

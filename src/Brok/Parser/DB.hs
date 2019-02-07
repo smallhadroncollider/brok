@@ -10,17 +10,10 @@ import ClassyPrelude
 import Data.Attoparsec.Text
 
 import Brok.Parser.Links (url)
-import Brok.Types.Link
+import Brok.Types.Link   (URL)
 
 line :: Parser (URL, Integer)
-line = do
-    lnk <- url
-    _ <- char ' '
-    int <- many1 digit
-    _ <- char '\n'
-    case readMay int :: Maybe Integer of
-        Just i  -> return (lnk, i)
-        Nothing -> fail "Unable to parse timestamp"
+line = (,) <$> (url <* char ' ') <*> (decimal <* endOfLine)
 
 entries :: Parser [(URL, Integer)]
 entries = many1 line

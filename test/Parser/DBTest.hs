@@ -42,12 +42,15 @@ test_db =
                         ])
                    (db content))
         , testCase
-              "big file"
+              "big file (last)"
               (assertEqual
                    "Gives back final url"
                    (Just
                         "https://developmentarc.gitbooks.io/react-indepth/content/life_cycle/the_life_cycle_recap.html")
                    (fst <$> (lastMay . fromRight [] $ db big)))
+        , testCase
+              "big file (length)"
+              (assertEqual "Gives back length" 142 (length $ fromRight [] (db big)))
         , testCase "invalid .brokdb" (assertEqual "Parse error" True (isLeft $ db invalid))
         , testCase "parses empty" (assertEqual "Gives back empty array" (Right []) (db ""))
         ]

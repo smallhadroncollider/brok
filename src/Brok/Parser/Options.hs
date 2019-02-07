@@ -38,7 +38,7 @@ ignoreP :: Parser Option
 ignoreP = lexeme $ Ignore <$> (string "--ignore" *> char '\n' *> many1 urlP)
 
 fileP :: Parser Text
-fileP = lexeme $ pack <$> many1 (notChar '\n')
+fileP = lexeme $ manyChars (notChar '\n')
 
 optsToConfig :: [Option] -> Config
 optsToConfig = foldl' convert defaultConfig
