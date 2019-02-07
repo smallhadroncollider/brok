@@ -91,6 +91,13 @@ test_parser =
                          "Gives back google.com"
                          (Right ["http://google.com?q=fish"])
                          (links "'http://google.com?q=fish'"))
+              , expectFail $
+                testCase
+                    "link with comma on end"
+                    (assertEqual
+                         "Gives back google.com"
+                         (Right ["http://google.com"])
+                         (links "testing http://google.com, here"))
               ]
         , testGroup
               "multiple links"
