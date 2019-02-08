@@ -28,6 +28,12 @@ header msg = do
     hPutStrLn stdout $ "*** " ++ msg ++ " ***"
     hSetSGR stdout [Reset]
 
+successMessage :: Text -> IO ()
+successMessage msg = do
+    hSetSGR stdout [SetColor Foreground Dull Green]
+    hPutStrLn stdout msg
+    hSetSGR stdout [Reset]
+
 errorMessage :: Text -> IO ()
 errorMessage msg = do
     hSetSGR stderr [SetColor Foreground Dull Red]

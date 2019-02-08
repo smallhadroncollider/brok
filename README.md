@@ -93,6 +93,18 @@ By default brök waits for 100ms between URL checks. You can change the delay:
 brok --interval 1000 test.md links.tex
 ```
 
+#### Only Show Failures
+
+If you want to see what's going on, but you're not interested in successes, then you can use the `--only-failures` option:
+
+```bash
+# see what's going on, but only show failures
+brok --only-failures test.md links.tex
+```
+
+If you're using brök as part of a script then you should [redirect `stdout`](#basic-usage).
+
+
 ### Git Pre-Commit Hook
 
 If you want to check all the links in your Git repo are valid before being able to commit then add something like the following to `.git/hooks/pre-commit`.
