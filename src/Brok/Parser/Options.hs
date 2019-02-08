@@ -19,6 +19,10 @@ data Option
     | Interval Integer
     | Ignore [Text]
     | Files [Text]
+    | OnlyFailures
+
+onlyFailuresP :: Parser Option
+onlyFailuresP = lexeme $ string "--only-failures" $> OnlyFailures
 
 noCacheP :: Parser Option
 noCacheP = lexeme $ string "--no-cache" $> Cache Nothing
@@ -45,10 +49,11 @@ optsToConfig = foldl' convert defaultConfig
     convert dc (Ignore i)   = dc {ignore = i}
     convert dc (Interval i) = dc {interval = i}
     convert dc (Files i)    = dc {files = i}
+    convert dc OnlyFailures = dc {onlyFailures = True}
 
 arguments :: Parser Config
 arguments = do
-    opts <- many' (noCacheP <|> cacheP <|> intervalP <|> ignoreP)
+    opts <- many' (noCacheP <|> cacheP <|> intervalP <|> ignoreP <|> onlyFailuresP)
     fls <- many1 fileP
     return . optsToConfig $ opts ++ [Files fls]
 

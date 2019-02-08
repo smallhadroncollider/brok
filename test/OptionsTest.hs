@@ -34,6 +34,12 @@ test_options =
                    (Right (Continue (defaultConfig {files = ["blah.md", "tests/spoon.md"]})))
                    (parse ["blah.md", "tests/spoon.md"]))
         , testCase
+              "single file with only-failures option"
+              (assertEqual
+                   "gives back files"
+                   (Right (Continue (defaultConfig {onlyFailures = True, files = ["blah.md"]})))
+                   (parse ["--only-failures", "blah.md"]))
+        , testCase
               "single file with no-cache option"
               (assertEqual
                    "gives back files"

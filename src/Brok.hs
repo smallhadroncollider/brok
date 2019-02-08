@@ -18,7 +18,7 @@ import           Brok.IO.Http      (check)
 import           Brok.IO.Output    (output)
 import           Brok.Options      (parse)
 import           Brok.Parser.Links (links)
-import qualified Brok.Types.Config as C (Config, cache, files, ignore, interval)
+import qualified Brok.Types.Config as C (Config, cache, files, ignore, interval, onlyFailures)
 import           Brok.Types.Link   (getURL, isSuccess)
 import           Brok.Types.Next   (Next (..))
 import           Brok.Types.Result (cachedLinks, ignoredLinks, justLinks, linkIOMap, parseLinks,
@@ -42,11 +42,11 @@ go config
     -- display results
     putStrLn ""
     header "Results"
-    anyErrors <- sequence $ output <$> checked
+    anyErrors <- output (C.onlyFailures config) checked
     -- cache successes
     setCached (C.cache config) $ getURL <$> filter isSuccess (concat (justLinks <$> checked))
     -- exit with appropriate status code
-    if foldl' (||) False anyErrors
+    if anyErrors
         then void exitFailure
         else void exitSuccess
 

@@ -27,29 +27,41 @@ statusError (Link _ Cached)      = False
 statusError (Link _ Ignored)     = False
 statusError _                    = True
 
-countErrors :: [Link] -> Int
-countErrors statuses = length $ filter statusError statuses
-
 outputPath :: TFilePath -> Text
 outputPath path = concat ["\n", "[", path, "]"]
 
-output :: Result -> IO Bool
-output (Result path NotFound) = do
+outputMap :: Bool -> Result -> IO Bool
+outputMap _ (Result path NotFound) = do
     errorMessage $ outputPath path
     errorMessage "  - File not found"
     return True
-output (Result path (ParseError err)) = do
+outputMap _ (Result path (ParseError err)) = do
     errorMessage $ outputPath path
     errorMessage "  - Parse error:"
     errorMessage err
     return True
-output (Result path (Links links)) = do
-    let errs = countErrors links /= 0
-    if errs
-        then errorMessage $ outputPath path
-        else message $ outputPath path
-    if not (null links)
-        then sequence_ $ linkOutput <$> links
-        else putStrLn "- No links found in file"
-    return errs
-output _ = return False
+outputMap onlyFailures (Result path (Links links)) = do
+    let errs = filter statusError links
+    let anyErrs = not (null errs)
+    if anyErrs
+        then do
+            errorMessage $ outputPath path
+            sequence_ $
+                linkOutput <$>
+                (if onlyFailures
+                     then errs
+                     else links)
+        else unless onlyFailures $ do
+                 message $ outputPath path
+                 if not (null links)
+                     then sequence_ $ linkOutput <$> links
+                     else putStrLn "- No links found in file"
+    return anyErrs
+outputMap _ _ = return False
+
+output :: Bool -> [Result] -> IO Bool
+output onlyFailures results = do
+    errs <- sequence $ outputMap onlyFailures <$> results
+    let anyErrs = foldl' (||) False errs
+    when (not anyErrs && onlyFailures) $ successMessage "All links working"
+    return anyErrs

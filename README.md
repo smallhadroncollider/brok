@@ -58,13 +58,21 @@ brok text.md links.tex > /dev/null
 
 #### Cache
 
-By default brök will cache successes for a day. It will always recheck errors.
+By default brök will cache successes for a day in a `.brokdb` file. It will always recheck errors.
 
 If you want to adjust the cache length, you can enter the number of seconds after which the cache invalidates:
 
 ```bash
 # cache for a week
 brok --cache 604800 test.md links.tex
+```
+
+If you want to avoid creating the `.brokdb` file or ignore the cache entirely you can use the `--no-cache` option:
+
+```bash
+# do not cache results
+# and don't use previously generated cache
+brok --no-cache test.md links.tex
 ```
 
 #### Ignore URLs
@@ -84,6 +92,18 @@ By default brök waits for 100ms between URL checks. You can change the delay:
 # wait for 1 second between checks
 brok --interval 1000 test.md links.tex
 ```
+
+#### Only Show Failures
+
+If you want to see what's going on, but you're not interested in successes, then you can use the `--only-failures` option:
+
+```bash
+# see what's going on, but only show failures
+brok --only-failures test.md links.tex
+```
+
+If you're using brök as part of a script then you should [redirect `stdout`](#basic-usage).
+
 
 ### Git Pre-Commit Hook
 

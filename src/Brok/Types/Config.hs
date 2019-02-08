@@ -7,11 +7,13 @@ import ClassyPrelude
 import Brok.Types.Link (URL)
 
 data Config = Config
-    { cache    :: Maybe Integer
-    , ignore   :: [URL]
-    , interval :: Integer
-    , files    :: [Text]
+    { cache        :: Maybe Integer
+    , ignore       :: [URL]
+    , interval     :: Integer
+    , files        :: [Text]
+    , onlyFailures :: Bool
     } deriving (Show, Eq)
 
 defaultConfig :: Config
-defaultConfig = Config {cache = Just 84600, ignore = [], interval = 100, files = []}
+defaultConfig =
+    Config {cache = Just 84600, ignore = [], interval = 100, files = [], onlyFailures = False}
