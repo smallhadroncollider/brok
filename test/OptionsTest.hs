@@ -34,10 +34,16 @@ test_options =
                    (Right (Continue (defaultConfig {files = ["blah.md", "tests/spoon.md"]})))
                    (parse ["blah.md", "tests/spoon.md"]))
         , testCase
+              "single file with no-cache option"
+              (assertEqual
+                   "gives back files"
+                   (Right (Continue (defaultConfig {cache = Nothing, files = ["blah.md"]})))
+                   (parse ["--no-cache", "blah.md"]))
+        , testCase
               "single file with cache option"
               (assertEqual
                    "gives back files"
-                   (Right (Continue (defaultConfig {cache = 172800, files = ["blah.md"]})))
+                   (Right (Continue (defaultConfig {cache = Just 172800, files = ["blah.md"]})))
                    (parse ["--cache", "172800", "blah.md"]))
         , testCase
               "multiple files with cache option"
@@ -45,7 +51,8 @@ test_options =
                    "gives back files"
                    (Right
                         (Continue
-                             (defaultConfig {cache = 172800, files = ["blah.md", "tests/spoon.md"]})))
+                             (defaultConfig
+                              {cache = Just 172800, files = ["blah.md", "tests/spoon.md"]})))
                    (parse ["--cache", "172800", "blah.md", "tests/spoon.md"]))
         , testCase
               "multiple files with interval option"
@@ -79,7 +86,7 @@ test_options =
                    (Right
                         (Continue
                              (defaultConfig
-                              { cache = 172800
+                              { cache = Just 172800
                               , interval = 400
                               , ignore = ["http://www.google.com", "http://facebook.com"]
                               , files = ["blah.md", "tests/spoon.md"]
@@ -102,7 +109,7 @@ test_options =
                    (Right
                         (Continue
                              (defaultConfig
-                              { cache = 172800
+                              { cache = Just 172800
                               , interval = 400
                               , ignore = ["http://www.google.com", "http://facebook.com"]
                               , files = ["blah.md", "tests/spoon.md"]
@@ -125,7 +132,7 @@ test_options =
                    (Right
                         (Continue
                              (defaultConfig
-                              { cache = 172800
+                              { cache = Just 172800
                               , interval = 400
                               , ignore = ["http://www.google.com", "http://facebook.com"]
                               , files = ["blah.md", "tests/spoon.md"]

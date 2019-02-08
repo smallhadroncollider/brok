@@ -15,21 +15,19 @@ import Brok.Types.Config
 import Brok.Types.Next        (Next (..))
 
 data Option
-    = Cache Integer
+    = Cache (Maybe Integer)
     | Interval Integer
     | Ignore [Text]
     | Files [Text]
 
-readInt :: String -> String -> Parser Integer
-readInt arg value =
-    maybe (fail $ "Unable to parse " ++ arg ++ " value") return (readMay value :: Maybe Integer)
+noCacheP :: Parser Option
+noCacheP = lexeme $ string "--no-cache" $> Cache Nothing
 
 cacheP :: Parser Option
-cacheP = lexeme $ Cache <$> (string "--cache" *> char '\n' *> many1 digit >>= readInt "cache")
+cacheP = lexeme $ Cache . Just <$> (string "--cache" *> char '\n' *> decimal)
 
 intervalP :: Parser Option
-intervalP =
-    lexeme $ Interval <$> (string "--interval" *> char '\n' *> many1 digit >>= readInt "interval")
+intervalP = lexeme $ Interval <$> (string "--interval" *> char '\n' *> decimal)
 
 urlP :: Parser Text
 urlP = lexeme url
@@ -50,7 +48,7 @@ optsToConfig = foldl' convert defaultConfig
 
 arguments :: Parser Config
 arguments = do
-    opts <- many' (cacheP <|> intervalP <|> ignoreP)
+    opts <- many' (noCacheP <|> cacheP <|> intervalP <|> ignoreP)
     fls <- many1 fileP
     return . optsToConfig $ opts ++ [Files fls]
 

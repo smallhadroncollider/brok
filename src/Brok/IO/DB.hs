@@ -36,8 +36,9 @@ linkToText (lnk, int) = concat [lnk, " ", tshow int]
 write :: [(URL, Integer)] -> IO ()
 write links = writeFile path . encodeUtf8 . unlines $ linkToText <$> links
 
-setCached :: Integer -> [URL] -> IO ()
-setCached age links = do
+setCached :: Maybe Integer -> [URL] -> IO ()
+setCached Nothing _ = return ()
+setCached (Just age) links = do
     current <- load age
     stamped <- sequence (stamp <$> links)
     write $ current ++ stamped
@@ -53,5 +54,6 @@ load age = do
         then read age path
         else return []
 
-getCached :: Integer -> IO [URL]
-getCached age = (fst <$>) <$> load age
+getCached :: Maybe Integer -> IO [URL]
+getCached Nothing    = return []
+getCached (Just age) = (fst <$>) <$> load age
