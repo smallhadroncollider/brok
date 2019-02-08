@@ -84,3 +84,29 @@ By default brök waits for 100ms between URL checks. You can change the delay:
 # wait for 1 second between checks
 brok --interval 1000 test.md links.tex
 ```
+
+### Git Pre-Commit Hook
+
+If you want to check all the links in your Git repo are valid before being able to commit then add something like the following to `.git/hooks/pre-commit`.
+
+#### `bash`
+
+```bash
+#! /bin/bash
+
+# cache for 1 week
+# use find to check all *.md files
+# only show errors (if there are any)
+brok --cache 604800 $(find . -type f -name "*.md") > /dev/null
+```
+
+#### `zsh`
+
+```bash
+#! /bin/zsh
+
+# cache for 1 week
+# using a zsh glob to check all *.md files
+# only show errors (if there are any)
+brok --cache 604800 */**/*.md > /dev/null
+```

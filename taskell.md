@@ -1,5 +1,6 @@
 ## Features
 
+- Should show line number of found links
 - Should detect if internet connection is down
 - Cache length option should accept units: s, m, h, d - default to s
 - Should be able to detect links without http:// or https:// prefixes
