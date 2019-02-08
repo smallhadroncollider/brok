@@ -6,6 +6,7 @@
 - Should be able to detect links without http:// or https:// prefixes
 - More detailed HttpException errors
 - Parallel HTTP fetch for separate domains
+- Better --only-failures output
 
 ## Bugs
 
