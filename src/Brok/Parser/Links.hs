@@ -42,7 +42,7 @@ url =
     option "" query
 
 noise :: Parser Token
-noise = anyChar >> return Nothing
+noise = anyChar $> Nothing
 
 urls :: Parser [URL]
 urls = nub . catMaybes <$> many1 ((Just <$> url) <|> noise)
