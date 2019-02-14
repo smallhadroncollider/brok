@@ -1,20 +1,25 @@
+## Refactoring
+
+- Use State monad for [Result] passing around?
+    > Needs to have IO too. mtl?
+
 ## Features
 
-- Should show line number of found links
-- Should detect if internet connection is down
-- Cache length option should accept units: s, m, h, d - default to s
-- Should be able to detect links without http:// or https:// prefixes
-- More detailed HttpException errors
 - Parallel HTTP fetch for separate domains
 - Better --only-failures output
+- Cache length option should accept units: s, m, h, d - default to s
+- More detailed HttpException errors
+- Should be able to detect links without http:// or https:// prefixes
+- Should detect if internet connection is down
+- Should show line number of found links
 
 ## Bugs
 
-- Is an invalid URL an error?
-    > Should an invalid URL count as an error? The parser shouldn't really pick up invalid URLs. But if it looks like one and fails then it is probably worth high-lighting.
 - Can't parse links containing single quote marks
 - Fetching message sometimes goes to more than one line, so next line doesn't replace it (saveCursor/restoreCursor?)
 - Checks the same URL multiple times if in different files
+- Is an invalid URL an error?
+    > Should an invalid URL count as an error? The parser shouldn't really pick up invalid URLs. But if it looks like one and fails then it is probably worth high-lighting.
 - Edge case: shouldn't delay if only a single URL being checked
 
 ## In Progress
