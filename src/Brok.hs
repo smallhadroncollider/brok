@@ -28,7 +28,7 @@ go :: C.Config -> IO ()
 go config
     -- read files
  = do
-    content <- sequence (readContent . pathToResult <$> C.files config)
+    content <- traverse (readContent . pathToResult) (C.files config)
     -- find links in each file
     let parsed = parseLinks links <$> content
     -- check cached successes
@@ -37,7 +37,7 @@ go config
     -- check links in each file
     header "Checking URLs"
     putStrLn ""
-    checked <- sequence (linkIOMap (check (C.interval config)) <$> uncached)
+    checked <- traverse (linkIOMap (check (C.interval config))) uncached
     replace "Fetching complete"
     -- display results
     putStrLn ""

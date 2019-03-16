@@ -40,7 +40,7 @@ setCached :: Maybe Integer -> [URL] -> IO ()
 setCached Nothing _ = return ()
 setCached (Just age) links = do
     current <- load age
-    stamped <- sequence (stamp <$> links)
+    stamped <- traverse stamp links
     write $ current ++ stamped
 
 -- read db
