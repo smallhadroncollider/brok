@@ -46,22 +46,22 @@ outputMap onlyFailures (Result path (Links links)) = do
     if anyErrs
         then do
             errorMessage $ outputPath path
-            sequence_ $
-                linkOutput <$>
+            traverse_
+                linkOutput
                 (if onlyFailures
                      then errs
                      else links)
         else unless onlyFailures $ do
                  message $ outputPath path
                  if not (null links)
-                     then sequence_ $ linkOutput <$> links
+                     then traverse_ linkOutput links
                      else putStrLn "- No links found in file"
     return anyErrs
 outputMap _ _ = return False
 
 output :: Bool -> [Result] -> IO Bool
 output onlyFailures results = do
-    errs <- sequence $ outputMap onlyFailures <$> results
+    errs <- traverse (outputMap onlyFailures) results
     let anyErrs = foldl' (||) False errs
     when (not anyErrs && onlyFailures) $ successMessage "All links working"
     return anyErrs

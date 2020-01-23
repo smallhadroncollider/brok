@@ -31,7 +31,7 @@ parens parser = surround '(' ')' parser <|> surround '[' ']' parser
 
 -- urls
 part :: String -> Parser Text
-part str = concat <$> many' (parens (part str) <|> manyChars (chars str))
+part str = concat <$> many1 (parens (part str) <|> manyChars (chars str))
 
 query :: Parser Text
 query = (++) <$> string "?" <*> part queryBodyChars
@@ -42,7 +42,7 @@ url =
     option "" query
 
 noise :: Parser Token
-noise = anyChar >> return Nothing
+noise = anyChar $> Nothing
 
 urls :: Parser [URL]
 urls = nub . catMaybes <$> many1 ((Just <$> url) <|> noise)
