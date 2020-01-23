@@ -1,4 +1,5 @@
 .stack-work/
+.stack-build/
 brok.cabal
 releases/
 /.brokdb
