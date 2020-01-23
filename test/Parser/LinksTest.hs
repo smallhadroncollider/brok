@@ -165,5 +165,14 @@ test_parser =
                               ])
                          (links tex))
               ]
+        , testGroup
+              "just protocol"
+              [ testCase
+                    "https://"
+                    (assertEqual "Gives back empty list" (Right []) (links "https://"))
+              , testCase
+                    "http://"
+                    (assertEqual "Gives back empty list" (Right []) (links "http://"))
+              ]
         , testCase "nothing" (assertEqual "Gives back empty list" (Right []) (links ""))
         ]
