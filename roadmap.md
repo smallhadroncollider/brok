@@ -42,3 +42,5 @@
     > Already used by HTTP-conduit, so may as well use it
 - Fixed InvalidURLException crash
 - Fixed issue with HEAD request returning a 404
+- Sees `https://` and `http://` as valid URLs
+- Sees `https://*` as a valid URL

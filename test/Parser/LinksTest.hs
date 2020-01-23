@@ -169,10 +169,16 @@ test_parser =
               "just protocol"
               [ testCase
                     "https://"
-                    (assertEqual "Gives back empty list" (Right []) (links "https://"))
+                    (assertEqual "Gives back empty list" (Right []) (links "Blah https:// x"))
               , testCase
                     "http://"
-                    (assertEqual "Gives back empty list" (Right []) (links "http://"))
+                    (assertEqual "Gives back empty list" (Right []) (links "Blah http:// x"))
+              , testCase
+                    "http://*"
+                    (assertEqual "Gives back empty list" (Right []) (links "Blah http://* x"))
+              , testCase
+                    "https://*"
+                    (assertEqual "Gives back empty list" (Right []) (links "Blah https://* x"))
               ]
         , testCase "nothing" (assertEqual "Gives back empty list" (Right []) (links ""))
         ]
