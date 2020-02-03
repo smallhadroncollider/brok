@@ -104,6 +104,10 @@ brok --only-failures test.md links.tex
 
 If you're using brök as part of a script then you should [redirect `stdout`](#basic-usage).
 
+### Colour Output
+
+By default the output uses bash colour codes. You can turn this off using the `--no-color` setting.
+
 
 ### Git Pre-Commit Hook
 
