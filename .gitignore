@@ -1,5 +1,6 @@
 .stack-work/
 .stack-build/
+dist-newstyle/
 brok.cabal
 releases/
 /.brokdb
