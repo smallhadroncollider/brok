@@ -22,6 +22,16 @@ fi
 # stash any changes
 git stash
 
+# check cabal build works
+cabal build
+
+if [ $? -ne 0 ]
+then
+    git stash pop
+    echo "\033[0;31mCabal build failed\033[0m"
+    exit
+fi
+
 # make sure latest changes pushed to github
 git push --all && git push --tags
 
@@ -35,6 +45,8 @@ mkdir -p "releases/$1/brok"
 # Mac
 stack build --work-dir "$workDir" --ghc-options -O3
 
+strip "$(stack path --local-install-root --work-dir $workDir)/bin/brok" # remove tokens
+
 tar -czvf "releases/$1/brok-$1_x86-64-mac.tar.gz" --directory="$(stack path --local-install-root --work-dir $workDir)/bin" "brok"
 
 
@@ -44,6 +56,8 @@ stack build --work-dir "$workDir" --docker --ghc-options -O3
 
 LINUX_FULL_PATH=$(find "$workDir" -path "*linux*" -and -path "*bin/brok")
 LINUX_PATH=${LINUX_FULL_PATH%"brok"}
+
+strip "$LINUX_FULL_PATH" # remove tokens
 
 tar -czvf "releases/$1/brok-$1_x86-64-linux.tar.gz"  --directory="$LINUX_PATH" "brok"
 
