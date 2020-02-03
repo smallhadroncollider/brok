@@ -40,6 +40,12 @@ test_options =
                    (Right (Continue (defaultConfig {onlyFailures = True, files = ["blah.md"]})))
                    (parse ["--only-failures", "blah.md"]))
         , testCase
+              "single file with no-colors option"
+              (assertEqual
+                   "gives back files"
+                   (Right (Continue (defaultConfig {noColor = True, files = ["blah.md"]})))
+                   (parse ["--no-color", "blah.md"]))
+        , testCase
               "single file with no-cache option"
               (assertEqual
                    "gives back files"

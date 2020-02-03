@@ -166,19 +166,25 @@ test_parser =
                          (links tex))
               ]
         , testGroup
-              "just protocol"
+              "placeholder URLs"
               [ testCase
                     "https://"
-                    (assertEqual "Gives back empty list" (Right []) (links "Blah https:// x"))
+                    (assertEqual "Gives back empty list" (Right []) (links "https://"))
               , testCase
                     "http://"
-                    (assertEqual "Gives back empty list" (Right []) (links "Blah http:// x"))
+                    (assertEqual "Gives back empty list" (Right []) (links "http://"))
               , testCase
                     "http://*"
-                    (assertEqual "Gives back empty list" (Right []) (links "Blah http://* x"))
+                    (assertEqual "Gives back empty list" (Right []) (links "http://*"))
               , testCase
                     "https://*"
-                    (assertEqual "Gives back empty list" (Right []) (links "Blah https://* x"))
+                    (assertEqual "Gives back empty list" (Right []) (links "https://*"))
+              , testCase
+                    "https://<username>.github.io/<repo>/"
+                    (assertEqual
+                         "Gives back empty list"
+                         (Right [])
+                         (links "https://<username>.github.io/<repo>/"))
               ]
         , testCase "nothing" (assertEqual "Gives back empty list" (Right []) (links ""))
         ]

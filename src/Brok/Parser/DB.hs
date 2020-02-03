@@ -10,7 +10,7 @@ import ClassyPrelude
 import Data.Attoparsec.Text
 
 import Brok.Parser.Links (url)
-import Brok.Types.Link   (URL)
+import Brok.Types.URL    (URL)
 
 line :: Parser (URL, Integer)
 line = (,) <$> (url <* char ' ') <*> (decimal <* endOfLine)

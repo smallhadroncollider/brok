@@ -19,10 +19,14 @@ data Option
     | Interval Integer
     | Ignore [Text]
     | Files [Text]
+    | NoColor
     | OnlyFailures
 
 onlyFailuresP :: Parser Option
 onlyFailuresP = lexeme $ string "--only-failures" $> OnlyFailures
+
+noColorP :: Parser Option
+noColorP = lexeme $ string "--no-color" $> NoColor
 
 noCacheP :: Parser Option
 noCacheP = lexeme $ string "--no-cache" $> Cache Nothing
@@ -49,11 +53,12 @@ optsToConfig = foldl' convert defaultConfig
     convert dc (Ignore i)   = dc {ignore = i}
     convert dc (Interval i) = dc {interval = i}
     convert dc (Files i)    = dc {files = i}
+    convert dc NoColor      = dc {noColor = True}
     convert dc OnlyFailures = dc {onlyFailures = True}
 
 arguments :: Parser Config
 arguments = do
-    opts <- many' (noCacheP <|> cacheP <|> intervalP <|> ignoreP <|> onlyFailuresP)
+    opts <- many' (noCacheP <|> cacheP <|> intervalP <|> ignoreP <|> noColorP <|> onlyFailuresP)
     fls <- many1 fileP
     return . optsToConfig $ opts ++ [Files fls]
 
