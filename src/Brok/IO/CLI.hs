@@ -5,67 +5,77 @@ module Brok.IO.CLI where
 
 import ClassyPrelude
 
+import Brok.Types.App      (App)
+import Brok.Types.Config   (noColor)
 import Data.Text.IO        (hPutStr, hPutStrLn)
 import System.Console.ANSI (Color (Blue, Green, Magenta, Red, Yellow), ColorIntensity (Dull),
                             ConsoleLayer (Foreground), SGR (Reset, SetColor), hClearLine,
                             hCursorUpLine, hSetSGR)
 
-message :: Text -> IO ()
+setSGR :: Handle -> [SGR] -> App ()
+setSGR hndl settings = do
+    colourize <- not <$> asks noColor
+    when colourize $ lift (hSetSGR hndl settings)
+
+blank :: App ()
+blank = putStrLn ""
+
+message :: Text -> App ()
 message msg = do
-    hSetSGR stdout [SetColor Foreground Dull Blue]
-    hPutStrLn stdout msg
-    hSetSGR stdout [Reset]
+    setSGR stdout [SetColor Foreground Dull Blue]
+    putStrLn msg
+    setSGR stdout [Reset]
 
-mehssage :: Text -> IO ()
+mehssage :: Text -> App ()
 mehssage msg = do
-    hSetSGR stdout [SetColor Foreground Dull Yellow]
-    hPutStrLn stdout msg
-    hSetSGR stdout [Reset]
+    setSGR stdout [SetColor Foreground Dull Yellow]
+    putStrLn msg
+    setSGR stdout [Reset]
 
-header :: Text -> IO ()
+header :: Text -> App ()
 header msg = do
-    hSetSGR stdout [SetColor Foreground Dull Magenta]
-    hPutStrLn stdout $ "*** " ++ msg ++ " ***"
-    hSetSGR stdout [Reset]
+    setSGR stdout [SetColor Foreground Dull Magenta]
+    putStrLn $ "*** " ++ msg ++ " ***"
+    setSGR stdout [Reset]
 
-successMessage :: Text -> IO ()
+successMessage :: Text -> App ()
 successMessage msg = do
-    hSetSGR stdout [SetColor Foreground Dull Green]
-    hPutStrLn stdout msg
-    hSetSGR stdout [Reset]
+    setSGR stdout [SetColor Foreground Dull Green]
+    putStrLn msg
+    setSGR stdout [Reset]
 
-errorMessage :: Text -> IO ()
+errorMessage :: Text -> App ()
 errorMessage msg = do
-    hSetSGR stderr [SetColor Foreground Dull Red]
-    hPutStrLn stderr msg
-    hSetSGR stderr [Reset]
+    setSGR stderr [SetColor Foreground Dull Red]
+    lift $ hPutStrLn stderr msg
+    setSGR stderr [Reset]
 
-errors :: Text -> [Text] -> IO ()
+errors :: Text -> [Text] -> App ()
 errors _ [] = return ()
 errors msg missing = do
     errorMessage msg
-    hPutStrLn stderr ""
+    lift $ hPutStrLn stderr ""
     errorMessage (unlines $ ("- " ++) <$> missing)
 
-split :: Handle -> Color -> Text -> Text -> IO ()
+split :: Handle -> Color -> Text -> Text -> App ()
 split hdl color left right = do
-    hSetSGR hdl [SetColor Foreground Dull color]
-    hPutStr hdl left
-    hSetSGR hdl [Reset]
-    hPutStr hdl $ ": " ++ right
-    hPutStrLn hdl ""
+    setSGR hdl [SetColor Foreground Dull color]
+    lift $ hPutStr hdl left
+    setSGR hdl [Reset]
+    lift $ hPutStr hdl $ ": " ++ right
+    lift $ hPutStrLn hdl ""
 
-splitErr :: Text -> Text -> IO ()
+splitErr :: Text -> Text -> App ()
 splitErr = split stderr Red
 
-splitOut :: Text -> Text -> IO ()
+splitOut :: Text -> Text -> App ()
 splitOut = split stdout Green
 
-splitMeh :: Text -> Text -> IO ()
+splitMeh :: Text -> Text -> App ()
 splitMeh = split stdout Yellow
 
-replace :: Text -> IO ()
+replace :: Text -> App ()
 replace msg = do
-    hCursorUpLine stdout 1
-    hClearLine stdout
-    hPutStrLn stdout msg
+    lift $ hCursorUpLine stdout 1
+    lift $ hClearLine stdout
+    putStrLn msg

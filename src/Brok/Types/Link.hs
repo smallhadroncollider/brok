@@ -4,7 +4,8 @@ module Brok.Types.Link where
 
 import ClassyPrelude
 
-type URL = Text
+import Brok.Types.App (App)
+import Brok.Types.URL (URL)
 
 data LinkType
     = BareLink
@@ -60,6 +61,6 @@ isSuccess :: Link -> Bool
 isSuccess (Link _ (Working _)) = True
 isSuccess _                    = False
 
-lmap :: (Link -> IO Link) -> Link -> IO Link
+lmap :: (Link -> App Link) -> Link -> App Link
 lmap fn (Link url BareLink) = fn (Link url BareLink)
 lmap _ lnk                  = return lnk

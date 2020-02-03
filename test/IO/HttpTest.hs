@@ -7,9 +7,13 @@ import ClassyPrelude
 
 import Test.Tasty
 
-import Brok.IO.Http     (check)
-import Brok.Types.Link  (Link (Link), LinkType (..), urlToLink)
+import Brok.IO.Http      (check)
+import Brok.Types.Config (defaultConfig)
+import Brok.Types.Link   (Link (Link), LinkType (..), urlToLink)
 import Test.Tasty.HUnit
+
+testLink :: Text -> IO Link
+testLink link = runReaderT (check 0 (urlToLink link)) defaultConfig
 
 test_http :: TestTree
 test_http =
@@ -17,8 +21,7 @@ test_http =
         "Brok.IO.Http"
         [ testCase "Medium (409 with HEAD)" $ do
               result <-
-                  check 0 $
-                  urlToLink
+                  testLink
                       "https://medium.freecodecamp.org/understanding-redux-the-worlds-easiest-guide-to-beginning-redux-c695f45546f6"
               assertEqual
                   "Returns a 200"
@@ -28,8 +31,7 @@ test_http =
                   result
         , testCase "TutsPlus (Requires User-Agent Header)" $ do
               result <-
-                  check 0 $
-                  urlToLink
+                  testLink
                       "https://code.tutsplus.com/tutorials/stateful-vs-stateless-functional-components-in-react--cms-29541"
               assertEqual
                   "Returns a 200"
@@ -38,15 +40,13 @@ test_http =
                        (Working 200))
                   result
         , testCase "Non-existent site" $ do
-              result <- check 0 $ urlToLink "http://askdjfhaksjdhfkajsdfh.com"
+              result <- testLink "http://askdjfhaksjdhfkajsdfh.com"
               assertEqual
                   "Returns a 200"
                   (Link "http://askdjfhaksjdhfkajsdfh.com" ConnectionFailure)
                   result
         , testCase "Invalid URL" $ do
-              result <-
-                  check 0 $
-                  urlToLink "http://user:password&#64;securesite.com/secret-file.json&quot;"
+              result <- testLink "http://user:password&#64;securesite.com/secret-file.json&quot;"
               assertEqual
                   "Returns a 200"
                   (Link "http://user:password&#64;securesite.com/secret-file.json&quot;" InvalidURL)

@@ -12,7 +12,7 @@ import Data.Attoparsec.Text
 import Data.List            (nub)
 
 import Brok.Parser.Attoparsec
-import Brok.Types.Link        (URL)
+import Brok.Types.URL         (URL)
 
 type Token = Maybe URL
 
