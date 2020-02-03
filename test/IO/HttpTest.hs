@@ -13,7 +13,7 @@ import Brok.Types.Link   (Link (Link), LinkType (..), urlToLink)
 import Test.Tasty.HUnit
 
 testLink :: Text -> IO Link
-testLink link = runReaderT (check 0 (urlToLink link)) defaultConfig
+testLink lnk = runReaderT (check 0 (urlToLink lnk)) defaultConfig
 
 test_http :: TestTree
 test_http =
