@@ -9,10 +9,10 @@ import ClassyPrelude
 
 import System.Directory (doesFileExist)
 
-import Brok.Types.App    (App)
+import Brok.Types.Brok    (Brok)
 import Brok.Types.Result
 
-readContent :: Result -> App Result
+readContent :: Result -> Brok Result
 readContent result = do
     let path = getPath result
     let filepath = unpack path

@@ -4,7 +4,7 @@ module Brok.Types.Result where
 
 import ClassyPrelude
 
-import Brok.Types.App  (App)
+import Brok.Types.Brok  (Brok)
 import Brok.Types.Link
 import Brok.Types.URL  (URL)
 
@@ -56,7 +56,7 @@ cachedLinks = findLinks cachedLink
 ignoredLinks :: [URL] -> Result -> Result
 ignoredLinks = findLinks ignoredLink
 
-linkIOMap :: (Link -> App Link) -> Result -> App Result
+linkIOMap :: (Link -> Brok Link) -> Result -> Brok Result
 linkIOMap fn (Result path (Links links)) = Result path . Links <$> traverse (lmap fn) links
 linkIOMap _ result                       = pure result
 

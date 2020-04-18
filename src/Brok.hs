@@ -19,16 +19,16 @@ import           Brok.IO.Http      (check)
 import           Brok.IO.Output    (output)
 import           Brok.Options      (parse)
 import           Brok.Parser.Links (links)
-import           Brok.Types.App    (App)
 import qualified Brok.Types.Config as C (files, ignore, interval, onlyFailures)
 import           Brok.Types.Link   (getURL, isSuccess)
 import           Brok.Types.Next   (Next (..))
+import           Brok.Types.Brok   (Brok, appConfig, mkApp)
 import           Brok.Types.Result (cachedLinks, ignoredLinks, justLinks, linkIOMap, parseLinks,
                                     pathToResult)
 
-go :: App ()
+go :: Brok ()
 go = do
-    config <- ask
+    config <- asks appConfig
     -- read files
     content <- traverse (readContent . pathToResult) (C.files config)
     -- find links in each file
@@ -61,7 +61,7 @@ brok :: IO ()
 brok = do
     config <- parse <$> getArgs
     case config of
-        Right (Continue cnf) -> runReaderT go cnf
+        Right (Continue cnf) -> runReaderT go (mkApp cnf)
         Right Help -> showHelp
         Left _ -> do
             hPutStrLn stderr "Invalid format"

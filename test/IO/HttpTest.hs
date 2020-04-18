@@ -10,10 +10,11 @@ import Test.Tasty
 import Brok.IO.Http      (check)
 import Brok.Types.Config (defaultConfig)
 import Brok.Types.Link   (Link (Link), LinkType (..), urlToLink)
+import Brok.Types.RAIO   (mkApp)
 import Test.Tasty.HUnit
 
 testLink :: Text -> IO Link
-testLink lnk = runReaderT (check 0 (urlToLink lnk)) defaultConfig
+testLink lnk = runReaderT (check 0 (urlToLink lnk)) (mkApp defaultConfig)
 
 test_http :: TestTree
 test_http =
