@@ -33,9 +33,11 @@ library:
   dependencies:
   - ansi-terminal
   - attoparsec
+  - connection
   - directory
   - http-conduit
   - http-client
+  - http-client-tls
   - text
   - time
 

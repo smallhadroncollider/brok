@@ -3,30 +3,41 @@
 
 module Brok.IO.Http
     ( check
+    , mkManagerNoCert
     ) where
 
 import ClassyPrelude
 
-import Control.Concurrent  (threadDelay)
-import Network.HTTP.Simple (HttpException, HttpException (..), Request, addRequestHeader,
-                            getResponseStatusCode, httpNoBody, parseRequest, setRequestMethod)
+import Control.Concurrent      (threadDelay)
+import Network.Connection      (TLSSettings (TLSSettingsSimple))
+import Network.HTTP.Client     (Manager, httpNoBody, newManager)
+import Network.HTTP.Client.TLS (mkManagerSettings)
+import Network.HTTP.Simple     (HttpException, HttpException (..), Request, addRequestHeader,
+                                getResponseStatusCode, parseRequest, setRequestMethod)
 
 import Brok.IO.CLI     (replace)
-import Brok.Types.Brok  (Brok)
+import Brok.Types.Brok (Brok, appTLSManager)
 import Brok.Types.Link
 import Brok.Types.URL  (URL)
 
 type StatusCode = Either HttpException Int
 
+mkManagerNoCert :: IO Manager
+mkManagerNoCert = do
+    let tls = TLSSettingsSimple True False False
+    let settings = mkManagerSettings tls Nothing
+    newManager settings
+
 setHeaders :: Request -> Request
 setHeaders = addRequestHeader "User-Agent" "smallhadroncollider/brok"
 
 makeRequest :: Integer -> ByteString -> URL -> Brok StatusCode
-makeRequest delay method url =
+makeRequest delay method url = do
+    manager <- asks appTLSManager
     lift . try $ do
         request <- setHeaders . setRequestMethod method <$> parseRequest (unpack url)
         threadDelay (fromIntegral delay * 1000) -- wait for a little while
-        getResponseStatusCode <$> httpNoBody request
+        getResponseStatusCode <$> httpNoBody request manager
 
 tryWithGet :: Integer -> URL -> StatusCode -> Brok StatusCode
 tryWithGet delay url (Right code)
