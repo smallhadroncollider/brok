@@ -75,6 +75,18 @@ If you want to avoid creating the `.brokdb` file or ignore the cache entirely yo
 brok --no-cache test.md links.tex
 ```
 
+#### Check Certificates
+
+Most browsers will display a website even if it has certificate issues (such as an incomplete certificate chain). By default Brök will not check certificates, so replicate this behaviour.
+
+If you would like to enforce certificate checking, you can turn this on:
+
+```bash
+brok --check-certs test.md
+```
+
+Any sites with certificate issues will then return a `Could not connect` error.
+
 #### Ignore URLs
 
 You can tell brök to ignore URLs with specified prefixes:
