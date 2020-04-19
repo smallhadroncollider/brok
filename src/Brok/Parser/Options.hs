@@ -73,8 +73,11 @@ arguments = do
 helpP :: Parser Next
 helpP = lexeme $ (string "--help" <|> string "-h") $> Help
 
+versionP :: Parser Next
+versionP = lexeme $ (string "--version" <|> string "-v") $> Version
+
 next :: Parser Next
-next = helpP <|> (Continue <$> arguments)
+next = helpP <|> versionP <|> (Continue <$> arguments)
 
 -- run parser
 options :: [Text] -> Either Text Next

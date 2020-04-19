@@ -21,6 +21,13 @@ test_options =
               [ testCase "--help" (assertEqual "return Help" (Right Help) (parse ["--help"]))
               , testCase "-h" (assertEqual "return Help" (Right Help) (parse ["-h"]))
               ]
+        , testGroup
+              "Version"
+              [ testCase
+                    "--version"
+                    (assertEqual "return Version" (Right Version) (parse ["--version"]))
+              , testCase "-v" (assertEqual "return Version" (Right Version) (parse ["-v"]))
+              ]
         , testCase
               "single file"
               (assertEqual

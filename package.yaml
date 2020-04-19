@@ -1,5 +1,5 @@
 name:                brok
-version:             0.2.0.0
+version:             0.2.0
 github:              "smallhadroncollider/brok"
 license:             BSD3
 author:              "Small Hadron Collider"
@@ -38,6 +38,7 @@ library:
   - http-conduit
   - http-client
   - http-client-tls
+  - template-haskell
   - text
   - time
 

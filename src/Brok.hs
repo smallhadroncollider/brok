@@ -12,6 +12,10 @@ import Data.FileEmbed (embedFile)
 import Data.Text.IO   (hPutStrLn)
 import System.Exit    (exitFailure, exitSuccess)
 
+import           Data.Version               (showVersion)
+import           Language.Haskell.TH.Syntax (liftString)
+import qualified Paths_brok                 (version)
+
 import           Brok.IO.CLI       (header, replace)
 import           Brok.IO.DB        (getCached, setCached)
 import           Brok.IO.Document  (readContent)
@@ -53,8 +57,11 @@ go = do
             then void exitFailure
             else void exitSuccess
 
-showHelp :: IO ()
-showHelp = putStr $ decodeUtf8 $(embedFile "template/usage.txt")
+putHelp :: IO ()
+putHelp = putStr $ decodeUtf8 $(embedFile "template/usage.txt")
+
+putVersion :: IO ()
+putVersion = putStrLn $ "brök " <> $(liftString $ showVersion Paths_brok.version)
 
 -- entry point
 brok :: IO ()
@@ -64,8 +71,9 @@ brok = do
         Right (Continue cnf) -> do
             manager <- mkManager (C.checkCerts cnf)
             runReaderT go (mkApp cnf manager)
-        Right Help -> showHelp
+        Right Help -> putHelp
+        Right Version -> putVersion
         Left _ -> do
             hPutStrLn stderr "Invalid format"
-            showHelp
+            putHelp
             void exitFailure
