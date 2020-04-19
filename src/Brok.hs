@@ -15,12 +15,12 @@ import System.Exit    (exitFailure, exitSuccess)
 import           Brok.IO.CLI       (header, replace)
 import           Brok.IO.DB        (getCached, setCached)
 import           Brok.IO.Document  (readContent)
-import           Brok.IO.Http      (check, mkManagerNoCert)
+import           Brok.IO.Http      (check, mkManager)
 import           Brok.IO.Output    (output)
 import           Brok.Options      (parse)
 import           Brok.Parser.Links (links)
 import           Brok.Types.Brok   (Brok, appConfig, mkApp)
-import qualified Brok.Types.Config as C (files, ignore, interval, onlyFailures)
+import qualified Brok.Types.Config as C (checkCerts, files, ignore, interval, onlyFailures)
 import           Brok.Types.Link   (getURL, isSuccess)
 import           Brok.Types.Next   (Next (..))
 import           Brok.Types.Result (cachedLinks, ignoredLinks, justLinks, linkIOMap, parseLinks,
@@ -62,7 +62,7 @@ brok = do
     config <- parse <$> getArgs
     case config of
         Right (Continue cnf) -> do
-            manager <- mkManagerNoCert
+            manager <- mkManager (C.checkCerts cnf)
             runReaderT go (mkApp cnf manager)
         Right Help -> showHelp
         Left _ -> do

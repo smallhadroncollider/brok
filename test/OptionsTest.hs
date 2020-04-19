@@ -46,6 +46,12 @@ test_options =
                    (Right (Continue (defaultConfig {noColor = True, files = ["blah.md"]})))
                    (parse ["--no-color", "blah.md"]))
         , testCase
+              "single file with check-certs option"
+              (assertEqual
+                   "gives back files"
+                   (Right (Continue (defaultConfig {checkCerts = True, files = ["blah.md"]})))
+                   (parse ["--check-certs", "blah.md"]))
+        , testCase
               "single file with no-cache option"
               (assertEqual
                    "gives back files"

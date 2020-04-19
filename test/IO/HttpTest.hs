@@ -7,7 +7,7 @@ import ClassyPrelude
 
 import Test.Tasty
 
-import Brok.IO.Http      (check, mkManagerNoCert)
+import Brok.IO.Http      (check, mkManager)
 import Brok.Types.Brok   (mkApp)
 import Brok.Types.Config (defaultConfig)
 import Brok.Types.Link   (Link (Link), LinkType (..), urlToLink)
@@ -15,7 +15,7 @@ import Test.Tasty.HUnit
 
 testLink :: Text -> IO Link
 testLink lnk = do
-    manager <- mkManagerNoCert
+    manager <- mkManager False
     runReaderT (check 0 (urlToLink lnk)) (mkApp defaultConfig manager)
 
 test_http :: TestTree

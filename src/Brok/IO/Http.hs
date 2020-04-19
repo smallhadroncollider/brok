@@ -3,14 +3,15 @@
 
 module Brok.IO.Http
     ( check
-    , mkManagerNoCert
+    , mkManager
     ) where
 
 import ClassyPrelude
 
 import Control.Concurrent      (threadDelay)
 import Network.Connection      (TLSSettings (TLSSettingsSimple))
-import Network.HTTP.Client     (Manager, httpNoBody, newManager)
+import Network.HTTP.Client     (HttpExceptionContent (InternalException), Manager, httpNoBody,
+                                newManager)
 import Network.HTTP.Client.TLS (mkManagerSettings)
 import Network.HTTP.Simple     (HttpException, HttpException (..), Request, addRequestHeader,
                                 getResponseStatusCode, parseRequest, setRequestMethod)
@@ -22,9 +23,9 @@ import Brok.Types.URL  (URL)
 
 type StatusCode = Either HttpException Int
 
-mkManagerNoCert :: IO Manager
-mkManagerNoCert = do
-    let tls = TLSSettingsSimple True False False
+mkManager :: Bool -> IO Manager
+mkManager checkCerts = do
+    let tls = TLSSettingsSimple (not checkCerts) False False
     let settings = mkManagerSettings tls Nothing
     newManager settings
 
@@ -43,6 +44,8 @@ tryWithGet :: Integer -> URL -> StatusCode -> Brok StatusCode
 tryWithGet delay url (Right code)
     | code >= 400 = makeRequest delay "GET" url
     | otherwise = return (Right code)
+tryWithGet delay url (Left (HttpExceptionRequest _ (InternalException _))) =
+    makeRequest delay "GET" url
 tryWithGet delay url (Left _) = makeRequest delay "GET" url
 
 fetch :: Integer -> URL -> Brok StatusCode
