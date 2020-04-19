@@ -20,6 +20,7 @@ data Option
     | Ignore [Text]
     | Files [Text]
     | NoColor
+    | CheckCerts
     | OnlyFailures
 
 onlyFailuresP :: Parser Option
@@ -27,6 +28,9 @@ onlyFailuresP = lexeme $ string "--only-failures" $> OnlyFailures
 
 noColorP :: Parser Option
 noColorP = lexeme $ string "--no-color" $> NoColor
+
+checkCertsP :: Parser Option
+checkCertsP = lexeme $ string "--check-certs" $> CheckCerts
 
 noCacheP :: Parser Option
 noCacheP = lexeme $ string "--no-cache" $> Cache Nothing
@@ -54,11 +58,15 @@ optsToConfig = foldl' convert defaultConfig
     convert dc (Interval i) = dc {interval = i}
     convert dc (Files i)    = dc {files = i}
     convert dc NoColor      = dc {noColor = True}
+    convert dc CheckCerts   = dc {checkCerts = True}
     convert dc OnlyFailures = dc {onlyFailures = True}
 
 arguments :: Parser Config
 arguments = do
-    opts <- many' (noCacheP <|> cacheP <|> intervalP <|> ignoreP <|> noColorP <|> onlyFailuresP)
+    opts <-
+        many'
+            (noCacheP <|> cacheP <|> intervalP <|> ignoreP <|> noColorP <|> checkCertsP <|>
+             onlyFailuresP)
     fls <- many1 fileP
     return . optsToConfig $ opts ++ [Files fls]
 

@@ -12,6 +12,7 @@ data Config = Config
     , interval     :: Integer
     , files        :: [Text]
     , noColor      :: Bool
+    , checkCerts   :: Bool
     , onlyFailures :: Bool
     } deriving (Show, Eq)
 
@@ -23,5 +24,6 @@ defaultConfig =
     , interval = 100
     , files = []
     , noColor = False
+    , checkCerts = False
     , onlyFailures = False
     }
