@@ -7,13 +7,16 @@ import ClassyPrelude
 
 import Test.Tasty
 
-import Brok.IO.Http      (check)
+import Brok.IO.Http      (check, mkManager)
+import Brok.Types.Brok   (mkApp)
 import Brok.Types.Config (defaultConfig)
 import Brok.Types.Link   (Link (Link), LinkType (..), urlToLink)
 import Test.Tasty.HUnit
 
 testLink :: Text -> IO Link
-testLink link = runReaderT (check 0 (urlToLink link)) defaultConfig
+testLink lnk = do
+    manager <- mkManager False
+    runReaderT (check 0 (urlToLink lnk)) (mkApp defaultConfig manager)
 
 test_http :: TestTree
 test_http =
@@ -37,6 +40,16 @@ test_http =
                   "Returns a 200"
                   (Link
                        "https://code.tutsplus.com/tutorials/stateful-vs-stateless-functional-components-in-react--cms-29541"
+                       (Working 200))
+                  result
+        , testCase "buginit.com (Incomplete certificate chain)" $ do
+              result <-
+                  testLink
+                      "https://buginit.com/javascript/javascript-destructuring-es6-the-complete-guide/"
+              assertEqual
+                  "Returns a 200"
+                  (Link
+                       "https://buginit.com/javascript/javascript-destructuring-es6-the-complete-guide/"
                        (Working 200))
                   result
         , testCase "Non-existent site" $ do

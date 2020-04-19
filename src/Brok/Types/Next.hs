@@ -9,4 +9,5 @@ import Brok.Types.Config (Config)
 data Next
     = Continue Config
     | Help
+    | Version
     deriving (Show, Eq)

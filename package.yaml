@@ -1,5 +1,5 @@
 name:                brok
-version:             0.2.0.0
+version:             1.0.0
 github:              "smallhadroncollider/brok"
 license:             BSD3
 author:              "Small Hadron Collider"
@@ -33,9 +33,12 @@ library:
   dependencies:
   - ansi-terminal
   - attoparsec
+  - connection
   - directory
   - http-conduit
   - http-client
+  - http-client-tls
+  - template-haskell
   - text
   - time
 

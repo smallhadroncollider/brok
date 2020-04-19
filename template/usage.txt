@@ -3,6 +3,7 @@ Usage: brok [--cache SECONDS] [--interval MILLISECONDS] [--ignore URLS] FILES
 Options:
 
 --no-color                Don't use color codes in the output
+--check-certs             Sites with certificate issues will fail
 --cache SECONDS           The number of seconds to cache successful results for (default: 86400)
 --interval MILLISECONDS   The number of milliseconds between each request (default: 100)
 --ignore URLS             A list of URL prefixes to ignore

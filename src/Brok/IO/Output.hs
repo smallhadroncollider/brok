@@ -8,12 +8,12 @@ module Brok.IO.Output
 import ClassyPrelude
 
 import Brok.IO.CLI
-import Brok.Types.App    (App)
+import Brok.Types.Brok    (Brok)
 import Brok.Types.Link
 import Brok.Types.Result
 
 -- output
-linkOutput :: Link -> App ()
+linkOutput :: Link -> Brok ()
 linkOutput (Link url BareLink)          = splitErr "- Failed (unknown)" url
 linkOutput (Link url Ignored)           = mehssage $ "- Ignored: " ++ url
 linkOutput (Link url Cached)            = splitOut "- OK (cached)" url
@@ -31,7 +31,7 @@ statusError _                    = True
 outputPath :: TFilePath -> Text
 outputPath path = concat ["\n", "[", path, "]"]
 
-outputMap :: Bool -> Result -> App Bool
+outputMap :: Bool -> Result -> Brok Bool
 outputMap _ (Result path NotFound) = do
     errorMessage $ outputPath path
     errorMessage "  - File not found"
@@ -60,7 +60,7 @@ outputMap onlyFailures (Result path (Links links)) = do
     return anyErrs
 outputMap _ _ = return False
 
-output :: Bool -> [Result] -> App Bool
+output :: Bool -> [Result] -> Brok Bool
 output onlyFailures results = do
     errs <- traverse (outputMap onlyFailures) results
     let anyErrs = foldl' (||) False errs

@@ -21,6 +21,13 @@ test_options =
               [ testCase "--help" (assertEqual "return Help" (Right Help) (parse ["--help"]))
               , testCase "-h" (assertEqual "return Help" (Right Help) (parse ["-h"]))
               ]
+        , testGroup
+              "Version"
+              [ testCase
+                    "--version"
+                    (assertEqual "return Version" (Right Version) (parse ["--version"]))
+              , testCase "-v" (assertEqual "return Version" (Right Version) (parse ["-v"]))
+              ]
         , testCase
               "single file"
               (assertEqual
@@ -45,6 +52,12 @@ test_options =
                    "gives back files"
                    (Right (Continue (defaultConfig {noColor = True, files = ["blah.md"]})))
                    (parse ["--no-color", "blah.md"]))
+        , testCase
+              "single file with check-certs option"
+              (assertEqual
+                   "gives back files"
+                   (Right (Continue (defaultConfig {checkCerts = True, files = ["blah.md"]})))
+                   (parse ["--check-certs", "blah.md"]))
         , testCase
               "single file with no-cache option"
               (assertEqual
