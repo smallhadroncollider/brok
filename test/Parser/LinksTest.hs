@@ -131,6 +131,13 @@ test_parser =
                          (Right ["https://github.com/Seldaek/hidden-input"])
                          (links
                               "`Resources/bin/hiddeninput.exe` is a third party binary provided within this component. Find sources and license at https://github.com/Seldaek/hidden-input."))
+              , expectFail $
+                testCase
+                    "link with unicode in domain"
+                    (assertEqual
+                         "Gives back http://💩.la"
+                         (Right ["http://💩.la"])
+                         (links "http://💩.la"))
               ]
         , testGroup
               "multiple links"
