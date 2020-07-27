@@ -68,7 +68,7 @@ arguments = do
             (noCacheP <|> cacheP <|> intervalP <|> ignoreP <|> noColorP <|> checkCertsP <|>
              onlyFailuresP)
     fls <- many1 fileP
-    return . optsToConfig $ opts ++ [Files fls]
+    pure . optsToConfig $ opts <> [Files fls]
 
 helpP :: Parser Next
 helpP = lexeme $ (string "--help" <|> string "-h") $> Help
@@ -81,8 +81,5 @@ next = helpP <|> versionP <|> (Continue <$> arguments)
 
 -- run parser
 options :: [Text] -> Either Text Next
-options [] = Left "No files provided"
-options content =
-    case parseOnly next (unlines content) of
-        Right c -> Right c
-        Left e  -> Left $ tshow e
+options []      = Left "No files provided"
+options content = first tshow $ parseOnly next (unlines content)

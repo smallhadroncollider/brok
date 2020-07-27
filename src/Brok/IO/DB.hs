@@ -13,8 +13,8 @@ import Data.Time.Clock.POSIX (getPOSIXTime)
 import System.Directory      (doesFileExist)
 
 import Brok.Parser.DB    (db)
-import Brok.Types.Config (cache)
 import Brok.Types.Brok   (Brok, appConfig)
+import Brok.Types.Config (cache)
 import Brok.Types.URL    (URL)
 
 path :: String
@@ -24,12 +24,12 @@ path = ".brokdb"
 removeOld :: Integer -> [(URL, Integer)] -> Brok [(URL, Integer)]
 removeOld age cached = do
     timestamp <- lift getPOSIXTime
-    return $ filter ((\val -> timestamp - val < fromInteger age) . fromInteger . snd) cached
+    pure $ filter ((\val -> timestamp - val < fromInteger age) . fromInteger . snd) cached
 
 stamp :: URL -> Brok (URL, Integer)
 stamp lnk = do
     timestamp <- lift $ round <$> getPOSIXTime
-    return (lnk, timestamp)
+    pure (lnk, timestamp)
 
 -- write db
 linkToText :: (URL, Integer) -> Text
@@ -46,7 +46,7 @@ setCached links = do
         Just age -> do
             current <- load age
             stamped <- traverse stamp links
-            write $ current ++ stamped
+            write $ current <> stamped
 
 -- read db
 read :: Integer -> FilePath -> Brok [(URL, Integer)]
@@ -57,7 +57,7 @@ load age = do
     exists <- lift $ doesFileExist path
     if exists
         then read age path
-        else return []
+        else pure []
 
 getCached :: Brok [URL]
 getCached = do

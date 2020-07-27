@@ -20,7 +20,7 @@ preQueryChars :: String
 preQueryChars = "-._~:/#%@"
 
 queryBodyChars :: String
-queryBodyChars = "-._~:/#%@!$&*+,;="
+queryBodyChars = preQueryChars <> "!$&*+,;="
 
 chars :: String -> Parser Char
 chars chrs = digit <|> letter <|> choice (char <$> chrs)
@@ -34,7 +34,7 @@ part :: String -> Parser Text
 part str = concat <$> many1 (parens (part str) <|> manyChars (chars str))
 
 query :: Parser Text
-query = (++) <$> string "?" <*> part queryBodyChars
+query = (<>) <$> string "?" <*> part queryBodyChars
 
 url :: Parser Text
 url =
@@ -49,8 +49,5 @@ urls = nub . catMaybes <$> many1 ((Just <$> url) <|> noise)
 
 -- run parser
 links :: Text -> Either Text [URL]
-links "" = Right []
-links content =
-    case parseOnly urls content of
-        Right c -> Right c
-        Left e  -> Left $ tshow e
+links ""      = Right []
+links content = first tshow $ parseOnly urls content

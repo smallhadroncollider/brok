@@ -6,6 +6,7 @@
 ## Features
 
 - Parallel HTTP fetch for separate domains
+- Add PDF support
 - Better --only-failures output
 - Cache length option should accept units: s, m, h, d - default to s
 - More detailed HttpException errors
@@ -16,8 +17,9 @@
 ## Bugs
 
 - Can't parse links containing single quote marks
+- URLs containing unicode characters won't parse
 - Fetching message sometimes goes to more than one line, so next line doesn't replace it (saveCursor/restoreCursor?)
-- Checks the same URL multiple times if in different files
+    > When a line is longer than the available width
 - Is an invalid URL an error?
     > Should an invalid URL count as an error? The parser shouldn't really pick up invalid URLs. But if it looks like one and fails then it is probably worth high-lighting.
 - Edge case: shouldn't delay if only a single URL being checked
@@ -44,3 +46,4 @@
 - Fixed issue with HEAD request returning a 404
 - Sees `https://` and `http://` as valid URLs
 - Sees `https://*` as a valid URL
+- Checks the same URL multiple times if in different files

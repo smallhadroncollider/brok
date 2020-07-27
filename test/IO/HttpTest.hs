@@ -16,7 +16,7 @@ import Test.Tasty.HUnit
 testLink :: Text -> IO Link
 testLink lnk = do
     manager <- mkManager False
-    runReaderT (check 0 (urlToLink lnk)) (mkApp defaultConfig manager)
+    runReaderT (check (urlToLink lnk)) (mkApp defaultConfig manager)
 
 test_http :: TestTree
 test_http =
