@@ -4,7 +4,6 @@ module Brok.Types.Link where
 
 import ClassyPrelude
 
-import Brok.Types.Brok (Brok)
 import Brok.Types.URL (URL)
 
 data LinkType
@@ -60,7 +59,3 @@ ignoredLink = findLink Ignored (flip isPrefixOf)
 isSuccess :: Link -> Bool
 isSuccess (Link _ (Working _)) = True
 isSuccess _                    = False
-
-lmap :: (Link -> Brok Link) -> Link -> Brok Link
-lmap fn (Link url BareLink) = fn (Link url BareLink)
-lmap _ lnk                  = return lnk

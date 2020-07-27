@@ -57,7 +57,7 @@ ignoredLinks :: [URL] -> Result -> Result
 ignoredLinks = findLinks ignoredLink
 
 linkIOMap :: (Link -> Brok Link) -> Result -> Brok Result
-linkIOMap fn (Result path (Links links)) = Result path . Links <$> traverse (lmap fn) links
+linkIOMap fn (Result path (Links links)) = Result path . Links <$> traverse fn links
 linkIOMap _ result                       = pure result
 
 justLinks :: Result -> [Link]
