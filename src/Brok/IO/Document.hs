@@ -9,7 +9,7 @@ import ClassyPrelude
 
 import System.Directory (doesFileExist)
 
-import Brok.Types.Brok    (Brok)
+import Brok.Types.Brok   (Brok)
 import Brok.Types.Result
 
 readContent :: Result -> Brok Result
@@ -19,4 +19,4 @@ readContent result = do
     exists <- lift $ doesFileExist filepath
     if exists
         then setContent result . decodeUtf8 <$> readFile filepath
-        else return $ notFound result
+        else pure $ notFound result

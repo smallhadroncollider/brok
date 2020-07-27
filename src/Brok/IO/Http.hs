@@ -43,14 +43,14 @@ makeRequest delay method url = do
 tryWithGet :: Integer -> URL -> StatusCode -> Brok StatusCode
 tryWithGet delay url (Right code)
     | code >= 400 = makeRequest delay "GET" url
-    | otherwise = return (Right code)
+    | otherwise = pure (Right code)
 tryWithGet delay url (Left (HttpExceptionRequest _ (InternalException _))) =
     makeRequest delay "GET" url
 tryWithGet delay url (Left _) = makeRequest delay "GET" url
 
 fetch :: Integer -> URL -> Brok StatusCode
 fetch delay url =
-    replace ("Fetching: " ++ url) >> makeRequest delay "HEAD" url >>= tryWithGet delay url
+    replace ("Fetching: " <> url) >> makeRequest delay "HEAD" url >>= tryWithGet delay url
 
 codeToResponse :: Link -> StatusCode -> Link
 codeToResponse lnk (Right code)

@@ -68,7 +68,7 @@ arguments = do
             (noCacheP <|> cacheP <|> intervalP <|> ignoreP <|> noColorP <|> checkCertsP <|>
              onlyFailuresP)
     fls <- many1 fileP
-    return . optsToConfig $ opts ++ [Files fls]
+    pure . optsToConfig $ opts <> [Files fls]
 
 helpP :: Parser Next
 helpP = lexeme $ (string "--help" <|> string "-h") $> Help

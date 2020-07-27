@@ -5,8 +5,8 @@ module Brok.IO.CLI where
 
 import ClassyPrelude
 
-import Brok.Types.Config   (noColor)
 import Brok.Types.Brok     (Brok, appConfig)
+import Brok.Types.Config   (noColor)
 import Data.Text.IO        (hPutStr, hPutStrLn)
 import System.Console.ANSI (Color (Blue, Green, Magenta, Red, Yellow), ColorIntensity (Dull),
                             ConsoleLayer (Foreground), SGR (Reset, SetColor), hClearLine,
@@ -35,7 +35,7 @@ mehssage msg = do
 header :: Text -> Brok ()
 header msg = do
     setSGR stdout [SetColor Foreground Dull Magenta]
-    putStrLn $ "*** " ++ msg ++ " ***"
+    putStrLn $ "*** " <> msg <> " ***"
     setSGR stdout [Reset]
 
 successMessage :: Text -> Brok ()
@@ -51,18 +51,18 @@ errorMessage msg = do
     setSGR stderr [Reset]
 
 errors :: Text -> [Text] -> Brok ()
-errors _ [] = return ()
+errors _ [] = pure ()
 errors msg missing = do
     errorMessage msg
     lift $ hPutStrLn stderr ""
-    errorMessage (unlines $ ("- " ++) <$> missing)
+    errorMessage (unlines $ ("- " <>) <$> missing)
 
 split :: Handle -> Color -> Text -> Text -> Brok ()
 split hdl color left right = do
     setSGR hdl [SetColor Foreground Dull color]
     lift $ hPutStr hdl left
     setSGR hdl [Reset]
-    lift $ hPutStr hdl $ ": " ++ right
+    lift $ hPutStr hdl $ ": " <> right
     lift $ hPutStrLn hdl ""
 
 splitErr :: Text -> Text -> Brok ()

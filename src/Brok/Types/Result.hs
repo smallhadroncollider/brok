@@ -4,7 +4,7 @@ module Brok.Types.Result where
 
 import ClassyPrelude
 
-import Brok.Types.Brok  (Brok)
+import Brok.Types.Brok (Brok)
 import Brok.Types.Link
 import Brok.Types.URL  (URL)
 
