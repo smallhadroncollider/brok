@@ -12,6 +12,21 @@ Currently only supports `http://` and `https://` prefixed URLs
 
 [Binaries for Mac and Linux are available](https://github.com/smallhadroncollider/brok/releases). Add the binary to a directory in your path (such as `/usr/local/bin`).
 
+### Docker
+
+To build the latest version:
+
+```bash
+docker build -t brok https://github.com/smallhadroncollider/brok.git
+```
+
+To run brök:
+
+```bash
+docker run brok
+```
+
+
 ### Cabal
 
 If you have `cabal` installed:
