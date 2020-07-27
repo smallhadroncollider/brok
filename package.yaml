@@ -34,6 +34,7 @@ library:
   - ansi-terminal
   - attoparsec
   - connection
+  - containers
   - directory
   - http-conduit
   - http-client

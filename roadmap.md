@@ -17,7 +17,6 @@
 
 - Can't parse links containing single quote marks
 - Fetching message sometimes goes to more than one line, so next line doesn't replace it (saveCursor/restoreCursor?)
-- Checks the same URL multiple times if in different files
 - Is an invalid URL an error?
     > Should an invalid URL count as an error? The parser shouldn't really pick up invalid URLs. But if it looks like one and fails then it is probably worth high-lighting.
 - Edge case: shouldn't delay if only a single URL being checked
@@ -44,3 +43,4 @@
 - Fixed issue with HEAD request returning a 404
 - Sees `https://` and `http://` as valid URLs
 - Sees `https://*` as a valid URL
+- Checks the same URL multiple times if in different files

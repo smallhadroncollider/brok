@@ -9,6 +9,7 @@ import Brok.Parser.Links (links)
 import Brok.Types.Brok   (Brok)
 import Brok.Types.Link
 import Brok.Types.URL    (URL)
+import Data.Map.Strict   as M (empty, insert, (!?))
 
 type TFilePath = Text
 
@@ -25,6 +26,8 @@ data Document =
     Document TFilePath
              Phase
     deriving (Show, Eq)
+
+type LDAcc a = (LinkDictionary, [a])
 
 getPath :: Document -> TFilePath
 getPath (Document path _) = path
@@ -52,9 +55,27 @@ cachedLinks = findLinks cachedLink
 ignoredLinks :: [URL] -> Document -> Document
 ignoredLinks = findLinks ignoredLink
 
-checkLinks :: Document -> Brok Document
-checkLinks (Document path (Links lnks)) = Document path . Links <$> traverse check lnks
-checkLinks result                       = pure result
+-- go over each link, building up a list of found links
+checkLink :: LDAcc Link -> Link -> Brok (LDAcc Link)
+checkLink (prev, lnks) (Link url UnresolvedLink) = do
+    case prev !? url of
+        Just result -> pure $ (prev, lnks <> [result])
+        Nothing -> do
+            result <- check (Link url UnresolvedLink)
+            let newPrev = insert url result prev
+            pure $ (newPrev, lnks <> [result])
+checkLink (prev, lnks) lnk = pure $ (prev, lnks <> [lnk])
+
+-- go over each document, building up a list of found links
+checkDocument :: LDAcc Document -> Document -> Brok (LDAcc Document)
+checkDocument (prev, documents) (Document path (Links lnks)) = do
+    (newPrev, newLnks) <- foldlM checkLink (prev, []) lnks
+    pure $ (newPrev, documents <> [Document path (Links newLnks)])
+checkDocument (prev, documents) document = pure $ (prev, documents <> [document])
+
+-- check links in all documents
+checkLinks :: [Document] -> Brok [Document]
+checkLinks documents = snd <$> foldlM checkDocument (M.empty, []) documents
 
 justLinks :: Document -> [Link]
 justLinks (Document _ (Links lnks)) = lnks

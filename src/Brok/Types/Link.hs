@@ -4,7 +4,8 @@ module Brok.Types.Link where
 
 import ClassyPrelude
 
-import Brok.Types.URL (URL)
+import           Brok.Types.URL  (URL)
+import qualified Data.Map.Strict as M (Map)
 
 data LinkType
     = UnresolvedLink
@@ -20,6 +21,8 @@ data Link =
     Link URL
          LinkType
     deriving (Show, Eq)
+
+type LinkDictionary = M.Map URL Link
 
 urlToLink :: URL -> Link
 urlToLink url = Link url UnresolvedLink

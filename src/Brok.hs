@@ -41,7 +41,7 @@ go = do
     -- check links in each file
     header "Checking URLs"
     putStrLn ""
-    checked <- traverse checkLinks uncached
+    checked <- checkLinks uncached
     replace "Fetching complete"
     -- display results
     putStrLn ""
