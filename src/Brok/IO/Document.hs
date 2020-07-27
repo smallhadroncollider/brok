@@ -9,14 +9,13 @@ import ClassyPrelude
 
 import System.Directory (doesFileExist)
 
-import Brok.Types.Brok   (Brok)
-import Brok.Types.Result
+import Brok.Types.Brok     (Brok)
+import Brok.Types.Document
 
-readContent :: Result -> Brok Result
-readContent result = do
-    let path = getPath result
+readContent :: TFilePath -> Brok Document
+readContent path = do
     let filepath = unpack path
     exists <- lift $ doesFileExist filepath
     if exists
-        then setContent result . decodeUtf8 <$> readFile filepath
-        else pure $ notFound result
+        then withContent path . decodeUtf8 <$> readFile filepath
+        else pure $ notFound path

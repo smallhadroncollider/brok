@@ -7,7 +7,7 @@ import ClassyPrelude
 import Brok.Types.URL (URL)
 
 data LinkType
-    = BareLink
+    = UnresolvedLink
     | Cached
     | Ignored
     | Working Int
@@ -22,32 +22,32 @@ data Link =
     deriving (Show, Eq)
 
 urlToLink :: URL -> Link
-urlToLink url = Link url BareLink
+urlToLink url = Link url UnresolvedLink
 
 getURL :: Link -> URL
 getURL (Link url _) = url
 
 working :: Link -> Int -> Link
-working (Link url BareLink) code = Link url (Working code)
-working lnk _                    = lnk
+working (Link url UnresolvedLink) code = Link url (Working code)
+working lnk _                          = lnk
 
 broken :: Link -> Int -> Link
-broken (Link url BareLink) code = Link url (Broken code)
-broken lnk _                    = lnk
+broken (Link url UnresolvedLink) code = Link url (Broken code)
+broken lnk _                          = lnk
 
 failure :: Link -> Link
-failure (Link url BareLink) = Link url ConnectionFailure
-failure lnk                 = lnk
+failure (Link url UnresolvedLink) = Link url ConnectionFailure
+failure lnk                       = lnk
 
 invalid :: Link -> Link
-invalid (Link url BareLink) = Link url InvalidURL
-invalid lnk                 = lnk
+invalid (Link url UnresolvedLink) = Link url InvalidURL
+invalid lnk                       = lnk
 
 findLink :: LinkType -> (URL -> URL -> Bool) -> [URL] -> Link -> Link
-findLink lType fn urls (Link url BareLink) =
+findLink lType fn urls (Link url UnresolvedLink) =
     case find (fn url) urls of
         Just _  -> Link url lType
-        Nothing -> Link url BareLink
+        Nothing -> Link url UnresolvedLink
 findLink _ _ _ lnk = lnk
 
 cachedLink :: [URL] -> Link -> Link

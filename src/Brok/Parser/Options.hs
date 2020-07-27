@@ -81,8 +81,5 @@ next = helpP <|> versionP <|> (Continue <$> arguments)
 
 -- run parser
 options :: [Text] -> Either Text Next
-options [] = Left "No files provided"
-options content =
-    case parseOnly next (unlines content) of
-        Right c -> Right c
-        Left e  -> Left $ tshow e
+options []      = Left "No files provided"
+options content = first tshow $ parseOnly next (unlines content)

@@ -8,13 +8,13 @@ module Brok.IO.Output
 import ClassyPrelude
 
 import Brok.IO.CLI
-import Brok.Types.Brok   (Brok)
+import Brok.Types.Brok     (Brok)
+import Brok.Types.Document
 import Brok.Types.Link
-import Brok.Types.Result
 
 -- output
 linkOutput :: Link -> Brok ()
-linkOutput (Link url BareLink)          = splitErr "- Failed (unknown)" url
+linkOutput (Link url UnresolvedLink)    = splitErr "- Failed (unknown)" url
 linkOutput (Link url Ignored)           = mehssage $ "- Ignored: " <> url
 linkOutput (Link url Cached)            = splitOut "- OK (cached)" url
 linkOutput (Link url (Working code))    = splitOut ("- OK (" <> tshow code <> ")") url
@@ -31,17 +31,17 @@ statusError _                    = True
 outputPath :: TFilePath -> Text
 outputPath path = concat ["\n", "[", path, "]"]
 
-outputMap :: Bool -> Result -> Brok Bool
-outputMap _ (Result path NotFound) = do
+outputMap :: Bool -> Document -> Brok Bool
+outputMap _ (Document path NotFound) = do
     errorMessage $ outputPath path
     errorMessage "  - File not found"
     pure True
-outputMap _ (Result path (ParseError err)) = do
+outputMap _ (Document path (ParseError err)) = do
     errorMessage $ outputPath path
     errorMessage "  - Parse error:"
     errorMessage err
     pure True
-outputMap onlyFailures (Result path (Links links)) = do
+outputMap onlyFailures (Document path (Links links)) = do
     let errs = filter statusError links
     let anyErrs = not (null errs)
     if anyErrs
@@ -60,7 +60,7 @@ outputMap onlyFailures (Result path (Links links)) = do
     pure anyErrs
 outputMap _ _ = pure False
 
-output :: Bool -> [Result] -> Brok Bool
+output :: Bool -> [Document] -> Brok Bool
 output onlyFailures results = do
     errs <- traverse (outputMap onlyFailures) results
     let anyErrs = foldl' (||) False errs

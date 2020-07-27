@@ -49,8 +49,5 @@ urls = nub . catMaybes <$> many1 ((Just <$> url) <|> noise)
 
 -- run parser
 links :: Text -> Either Text [URL]
-links "" = Right []
-links content =
-    case parseOnly urls content of
-        Right c -> Right c
-        Left e  -> Left $ tshow e
+links ""      = Right []
+links content = first tshow $ parseOnly urls content
