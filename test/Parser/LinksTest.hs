@@ -113,6 +113,24 @@ test_parser =
                          "Gives back google.com"
                          (Right ["http://google.com"])
                          (links "testing http://google.com, here"))
+              , expectFail $
+                testCase
+                    "link with non-standard character in middle"
+                    (assertEqual
+                         "Gived back full link"
+                         (Right
+                              [ "https://img.shields.io/badge/made_out_of_awesome-✓-brightgreen.svg?style=flat-square"
+                              ])
+                         (links
+                              "https://img.shields.io/badge/made_out_of_awesome-✓-brightgreen.svg?style=flat-square"))
+              , expectFail $
+                testCase
+                    "link with full stop at end"
+                    (assertEqual
+                         "Gives back link without full-stop"
+                         (Right ["https://github.com/Seldaek/hidden-input"])
+                         (links
+                              "`Resources/bin/hiddeninput.exe` is a third party binary provided within this component. Find sources and license at https://github.com/Seldaek/hidden-input."))
               ]
         , testGroup
               "multiple links"
