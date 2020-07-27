@@ -20,7 +20,7 @@ preQueryChars :: String
 preQueryChars = "-._~:/#%@"
 
 queryBodyChars :: String
-queryBodyChars = "-._~:/#%@!$&*+,;="
+queryBodyChars = preQueryChars <> "!$&*+,;="
 
 chars :: String -> Parser Char
 chars chrs = digit <|> letter <|> choice (char <$> chrs)
@@ -34,7 +34,7 @@ part :: String -> Parser Text
 part str = concat <$> many1 (parens (part str) <|> manyChars (chars str))
 
 query :: Parser Text
-query = (++) <$> string "?" <*> part queryBodyChars
+query = (<>) <$> string "?" <*> part queryBodyChars
 
 url :: Parser Text
 url =
