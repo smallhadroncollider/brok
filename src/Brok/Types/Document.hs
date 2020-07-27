@@ -52,10 +52,9 @@ cachedLinks = findLinks cachedLink
 ignoredLinks :: [URL] -> Document -> Document
 ignoredLinks = findLinks ignoredLink
 
-checkLinks :: Integer -> Document -> Brok Document
-checkLinks interval (Document path (Links lnks)) =
-    Document path . Links <$> traverse (check interval) lnks
-checkLinks _ result = pure result
+checkLinks :: Document -> Brok Document
+checkLinks (Document path (Links lnks)) = Document path . Links <$> traverse check lnks
+checkLinks result                       = pure result
 
 justLinks :: Document -> [Link]
 justLinks (Document _ (Links lnks)) = lnks

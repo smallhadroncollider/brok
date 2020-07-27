@@ -23,7 +23,7 @@ import           Brok.IO.Http        (mkManager)
 import           Brok.IO.Output      (output)
 import           Brok.Options        (parse)
 import           Brok.Types.Brok     (Brok, appConfig, mkApp)
-import qualified Brok.Types.Config   as C (checkCerts, files, ignore, interval, onlyFailures)
+import qualified Brok.Types.Config   as C (checkCerts, files, ignore, onlyFailures)
 import           Brok.Types.Document (cachedLinks, checkLinks, ignoredLinks, justLinks, parseLinks)
 import           Brok.Types.Link     (getURL, isSuccess)
 import           Brok.Types.Next     (Next (..))
@@ -41,7 +41,7 @@ go = do
     -- check links in each file
     header "Checking URLs"
     putStrLn ""
-    checked <- traverse (checkLinks (C.interval config)) uncached
+    checked <- traverse checkLinks uncached
     replace "Fetching complete"
     -- display results
     putStrLn ""
