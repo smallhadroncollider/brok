@@ -2,7 +2,7 @@
 
 Find broken links in text documents
 
-![Demo](https://files.smallhadroncollider.com/brok-0.1.gif)
+![Demo](docs/brok-0.1.gif)
 
 Similar idea to [awesome_bot](https://github.com/dkhamsing/awesome_bot), but with different output options.
 
